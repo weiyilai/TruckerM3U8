@@ -22,4 +22,16 @@
     </None>
   </ItemGroup>
 
+  <!-- Exclude unwanted SCSSdkClient files (the rest are auto-included by the SDK) -->
+  <ItemGroup>
+    <Compile Remove="ThirdParty\scs-sdk-plugin\scs-client\C#\SCSSdkClient\Properties\**" />
+    <Compile Remove="ThirdParty\scs-sdk-plugin\scs-client\C#\SCSSdkClient\Log.cs" />
+    <Compile Remove="ThirdParty\scs-sdk-plugin\scs-client\C#\SCSSdkClient\packages\**" />
+    <!-- Exclude demo project entirely -->
+    <Compile Remove="ThirdParty\scs-sdk-plugin\scs-client\C#\SCSSdkClient.Demo\**" />
+    <!-- Exclude the native C++ plugin code -->
+    <Compile Remove="ThirdParty\scs-sdk-plugin\scs-telemetry\**" />
+    <Compile Remove="ThirdParty\scs-sdk-plugin\scs_sdk\**" />
+  </ItemGroup>
+
 </Project>

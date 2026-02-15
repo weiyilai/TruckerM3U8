@@ -18,7 +18,7 @@
 <body>
     <h1>TruckerM3U8</h1>
     <i>Convert (not only) m3u8 stream to mp3 that ETS2/ATS can recognize.</i>
-    <p>Dest URL: <a class="destUrl" href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a> </p>
+    <p>Dest URL: <a class="destUrl" href="*">---</a> </p>
 
 
     <div>
@@ -67,7 +67,7 @@
 
 
     <div style="padding-top: 16px">
-        <i>v.1.2</i>
+        <i id="versionText">v.--</i>
         <br />
         <a href="https://github.com/JCxYIS/TruckerM3U8/releases/latest">
             <img src="https://img.shields.io/github/v/release/JCxYIS/TruckerM3U8?label=Latest%20version&style=flat-square" />
@@ -140,8 +140,15 @@
             }
         }
 
+        const fetchVersion = async () => {
+            let req = await fetch('/version');
+            let ver = await req.text();
+            document.getElementById('versionText').textContent = 'v.' + ver;
+        }
+
         fetchRadioList();
         fetchCurrentPlaying();
+        fetchVersion();
         updateUi();
     </script>
 </body>

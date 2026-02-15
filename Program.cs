@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using System.Diagnostics;
+using TruckerM3U8.Hubs;
 using TruckerM3U8.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<RestreamService>();
+builder.Services.AddSignalR();
+builder.Services.AddHostedService<TelemetryService>();
 
 var app = builder.Build();
 
@@ -32,6 +35,11 @@ app.Map("/", async (HttpContext context, HttpResponse response) =>
         // cleanup
         restreamService.UnregisterStream(response.Body);
     }
+});
+
+app.MapGet("/version", () =>
+{
+    return "2.0";
 });
 
 app.MapGet("/sourceUrl", () =>
@@ -64,17 +72,13 @@ app.UseStaticFiles(new StaticFileOptions
     },   
 });
 
-// ±Ò°Ê®É¶}±ÒÂsÄı¾¹
+// Map SignalR hub
+app.MapHub<TelemetryHub>("/telemetryHub");
+
+// å•Ÿå‹•æ™‚é–‹å•Ÿç€è¦½å™¨
 if (app.Environment.IsProduction())
 {
-    Process.Start("explorer", "http://localhost:3378/settings.html");
-    app.Run("http://localhost:3378");
-}
-else
-{
-    app.Run();
+    Process.Start("explorer", "http://localhost:3378/settings.html");    
 }
 
-
-
-
+app.Run("http://0.0.0.0:3378");

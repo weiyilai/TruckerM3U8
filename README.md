@@ -1,4 +1,5 @@
 # TruckerM3U8
+
 Convert (not only) m3u8 stream to mp3 that ETS2/ATS can recognize.
 
 ## How to use
@@ -15,13 +16,19 @@ You can add your own radio in `wwwroot/radio.json`
 
 ![](https://i.imgur.com/UHCEv7z.png)
 
+## Telemetry
+
+https://github.com/RenCloud/scs-sdk-plugin/releases/tag/V.1.12.1
+Place dll under `bin/win_x64/plugins`
 
 ## How does it work
+
 lol it's just ffmpeg launcher
+
 ```
-+-------------+                       
-|   FFMPEG    |  (Download & convert m3u8 to mp3 stream)                   
-+-------------+ 
++-------------+
+|   FFMPEG    |  (Download & convert m3u8 to mp3 stream)
++-------------+
      |
      | tcp (port 1049)
      |
