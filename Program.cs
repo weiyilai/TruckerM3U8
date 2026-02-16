@@ -8,12 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<RestreamService>();
 builder.Services.AddSignalR();
+builder.Services.AddControllers();
 builder.Services.AddHostedService<TelemetryService>();
 
 var app = builder.Build();
 
 
-app.Map("/", async (HttpContext context, HttpResponse response) =>
+app.Map("/mp3", async (HttpContext context, HttpResponse response) =>
 {
     response.ContentType = "audio/mp3";
 
@@ -61,16 +62,8 @@ app.MapPost("/sourceUrl", ([FromBody] string url) =>
 });
 
 
-//app.MapControllers();
-
-// Serve Static files
-app.UseStaticFiles(new StaticFileOptions
-{
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers[HeaderNames.CacheControl] = "no-store";
-    },   
-});
+app.MapControllers();
+app.UseStaticFiles();
 
 // Map SignalR hub
 app.MapHub<TelemetryHub>("/telemetryHub");

@@ -18,7 +18,7 @@
 <body>
     <h1>TruckerM3U8</h1>
     <i>Convert (not only) m3u8 stream to mp3 that ETS2/ATS can recognize.</i>
-    <p>Dest URL: <a class="destUrl" href="*">---</a> </p>
+    <p>Mp3 Stream URL: <a class="destUrl" href="*">---</a> </p>
 
 
     <div>
@@ -30,32 +30,41 @@
                 <th>Name</th>
                 <th>URL</th>
             </tr>
-            <!--<tr>
+            <tr>
                 <td><button onclick="addNewRadio()">Add New &amp; Play</button></td>
                 <td><input id="addName" /></td>
                 <td><input id="addUrl" /></td>
-            </tr>-->
+            </tr>
             <tbody id="radioList">
             </tbody>
         </table>
 
-        <p>You can add more radio in <code>wwwroot/radio.json</code></p>
-
     </div>
 
     <div>
-        <h2>How to add TruckerM3U8 into ETS2</h2>
+        <h2>Add TruckerM3U8 URL into ETS2</h2>
+
+        <!-- Auto -->
         <ul>
-            <li>Open My Documents\Euro Truck Simulator 2\live_streams.sii in Notepad</li>
+            <li>ETS2: <span id="ets2Status">Loading...</span></li>
+            <li>ATS: <span id="atsStatus">Loading...</span></li>
+        </ul>
+        <div id="applyBtnContainer" style="display:none">
+            <button onclick="applyLiveStreamList()">Add TruckerM3U8 URL To Stream List</button>
+        </div>
+
+        <!-- <h3>Add Manually </h3>
+        <ul>
+            <li>Open Documents\Euro Truck Simulator 2 (or ATS)\live_streams.sii in Notepad</li>
             <li>Scroll to the bottom of the list and append the line below (You may need to change the index 274)</li>
             <ul>
-                <li style="font-family: monospace">stream_data[274]: "<span class="destUrl"></span>|&lt;color value=FFBBC539&gt;TruckerM3U8|You Choose|TW|128|0"</li>
+                <li style="font-family: monospace">stream_data[0]: "<span class="destUrl"></span>|&lt;color value=FFBBC539&gt;TruckerM3U8|You Choose|TW|128|0"</li>
             </ul>
             <li>Scroll to the top, change "stream_data" to total radio count</li>
             <ul>
                 <li style="font-family: monospace">stream_data: 275</li>
             </ul>
-        </ul>
+        </ul> -->
     </div>
 
     <div>
@@ -79,7 +88,7 @@
         var currentRadioUrl = "";
 
         const fetchRadioList = async () => {
-            let req = await fetch("/radio.json");
+            let req = await fetch("/api/playback/radiolist");
             radioList = await req.json();
             updateUi();
         }
@@ -112,10 +121,50 @@
                 .catch(error => console.error(error))
         }
 
+        const addNewRadio = () => {
+            let name = document.getElementById("addName").value.trim();
+            let url  = document.getElementById("addUrl").value.trim();
+            if (!name || !url) {
+                alert("Please enter both name and URL.");
+                return;
+            }
+
+            fetch('/api/playback/radiolist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, url })
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                radioList = data;
+                updateUi();
+                sendPlayRequest(url);
+                document.getElementById("addName").value = "";
+                document.getElementById("addUrl").value  = "";
+            })
+            .catch(err => console.error(err));
+        }
+
+        const deleteRadio = (name) => {
+            if (!confirm(`Delete "${name}"?`)) return;
+
+            fetch('/api/playback/radiolist', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, url: "" })
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                radioList = data;
+                updateUi();
+            })
+            .catch(err => console.error(err));
+        }
+
         const updateUi = () => {
             // Local Url
             let destUrls = document.getElementsByClassName("destUrl");
-            let rootUrl = window.location.protocol + "//" + window.location.host;
+            let rootUrl = window.location.protocol + "//" + window.location.host + "/mp3";
             for (let i = 0; i < destUrls.length; i++) {
                 destUrls[i].innerHTML = rootUrl;
                 destUrls[i].href = rootUrl;
@@ -132,7 +181,7 @@
                 } else {
                     cell.innerHTML = `<button onclick="sendPlayRequest('${radioList[i].url}')">Play</button>`
                 }
-                //cell.innerHTML += `<button>Delete</button>`;
+                cell.innerHTML += ` <button onclick="deleteRadio('${radioList[i].name}')">Delete</button>`;
                 cell = row.insertCell();
                 cell.innerHTML = radioList[i].name;
                 cell = row.insertCell();
@@ -146,9 +195,39 @@
             document.getElementById('versionText').textContent = 'v.' + ver;
         }
 
+        const stateText = (state) => {
+            switch (state) {
+                case -1: return 'live_streams.sii not found';
+                case  0: return 'TruckerM3U8 URL missing';
+                case  1: return 'OK';
+                default: return 'Unknown';
+            }
+        }
+
+        const fetchLiveStreamCheck = async () => {
+            let req = await fetch('/api/fileCheck/liveStreamListCheck');
+            let data = await req.json();
+            document.getElementById('ets2Status').textContent = stateText(data.ets2);
+            document.getElementById('atsStatus').textContent  = stateText(data.ats);
+
+            // Show apply button if any game has state 0 (file exists but URL missing)
+            if (data.ets2 === 0 || data.ats === 0) {
+                document.getElementById('applyBtnContainer').style.display = '';
+            } else {
+                document.getElementById('applyBtnContainer').style.display = 'none';
+            }
+        }
+
+        const applyLiveStreamList = async () => {
+            if (!confirm('Add TruckerM3U8 URL to your ETS2/ATS live stream list?')) return;
+            await fetch('/api/fileCheck/liveStreamListApply');
+            location.reload();
+        }
+
         fetchRadioList();
         fetchCurrentPlaying();
         fetchVersion();
+        fetchLiveStreamCheck();
         updateUi();
     </script>
 </body>
