@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Oxanium:wght@200..800&display=swap');
+
+
+:root {
+    --truck-orange: #ff9800;
+    --truck-green: #4caf50;
+    --truck-blue: #2196f3;
+    --truck-red: #f44336;
+    --bg-dark: #0f172a;
+    --panel-bg: rgba(30, 41, 59, 0.7);
+    --text-main: #e2e8f0;
+}
+
+.light-theme {
+    --bg-dark: #f1f5f9;
+    --panel-bg: rgba(255, 255, 255, 0.8);
+    --text-main: #1e293b;
+}
+
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: "Oxanium",  "Noto Sans TC", sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease;
+}

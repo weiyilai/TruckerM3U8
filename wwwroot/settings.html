@@ -42,9 +42,7 @@
     </div>
 
     <div>
-        <h2>Add TruckerM3U8 URL into ETS2</h2>
-
-        <!-- Auto -->
+        <h2>Add TruckerM3U8 URL into ETS2/ATS</h2>
         <ul>
             <li>ETS2: <span id="ets2Status">Loading...</span></li>
             <li>ATS: <span id="atsStatus">Loading...</span></li>
@@ -65,6 +63,20 @@
                 <li style="font-family: monospace">stream_data: 275</li>
             </ul>
         </ul> -->
+    </div>
+    
+    <div>
+        <h2>Add Telemetry SDK into ETS2/ATS (Optional)</h2>
+        <p>Telemetry SDK is used to get the game data and send it to the web page.</p>
+        <p>You can view the telemetry data on the <a href="telemetry.html">Telemetry Page</a>.</p>
+        
+        <ul>
+            <li>ETS2: <span id="ets2TelemetryStatus">Loading...</span></li>
+            <li>ATS: <span id="atsTelemetryStatus">Loading...</span></li>
+        </ul>
+        <div id="applyTelemetryBtnContainer" style="display:none">
+            <button onclick="applyTelemetryDll()">Install Telemetry DLL</button>
+        </div>
     </div>
 
     <div>
