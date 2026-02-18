@@ -75,9 +75,26 @@
             border-left: 3px solid var(--truck-orange);
             padding-left: 0.5rem;
         }
+
+        /* === Fixed-viewport scaling (reference: 1200×800, 3:2) === */
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+        #viewport {
+            width: 1200px;
+            height: 800px;
+            padding: 24px;
+            transform-origin: top left;
+            position: absolute;
+            top: 0; left: 0;
+        }
     </style>
 </head>
-<body class="p-6" id="app-body">
+<body id="app-body">
     <!-- Tailwind CDN safelist: cargo card dynamic colors -->
     <div class="hidden
         border-orange-500/20 border-emerald-500/20 border-red-500/20
@@ -87,10 +104,11 @@
         bg-orange-500/10 bg-emerald-500/10 bg-red-500/10
     "></div>
 
+    <div id="viewport">
     <div class="flex-1 grid grid-cols-12 gap-6 max-w-7xl mx-auto w-full">
         
         <!-- LHS 儀表板區 -->
-        <div class="col-span-12 md:col-span-5 glass p-6 flex flex-col items-center justify-between">
+        <div class="col-span-5 glass p-6 flex flex-col items-center justify-between">
             <!-- 方向燈 -->
             <div class="flex justify-between w-full px-8 mb-2">
                 <span id="indicator-left" class="text-6xl text-slate-700">⬅</span>
@@ -156,7 +174,7 @@
         </div>
 
         <!-- RHS 資訊區 -->
-        <div class="col-span-12 md:col-span-7 flex flex-col space-y-6">
+        <div class="col-span-7 flex flex-col space-y-6">
             <div class="glass p-3 flex justify-between items-center px-6">
                 <div class="speedo-font font-bold text-orange-500 tracking-wider text-lg">TruckerM3U8 2.0</div>
                 <div class="flex items-center space-x-4">
@@ -264,6 +282,7 @@
             <div class="space-y-2 max-h-[60vh] overflow-y-auto pr-2" id="playlist-container"></div>
         </div>
     </div>
+    </div><!-- /#viewport -->
 
     <script>
         let radioListData = [
@@ -298,9 +317,10 @@
             fuelAmount: 0,
             fuelCapacity: 1000,
 
+            onjob: false,  // is the user currently on a job?
+            isSpecialJob: false,
             cargoName: "",
             cargoMass: 5000,  // Mass in kilograms
-            isSpecialJob: false,
             cityDestination: "",
             navigationDistance: 0,  //  The value of truck's navigation distance (in meters)
             navigationTime: 0,  // The value of truck's navigation eta (in second)
@@ -398,20 +418,20 @@
             document.getElementById('fuel-bar').style.width = Math.round(fuelPercent) + '%';
 
             // === Cargo / Navigation ===
-            const hasJob = !!data.cargoName;
-            const isSpecial = hasJob && data.isSpecialJob;
+            const onJob = data.onjob;
+            const isSpecial = onJob && data.isSpecialJob;
             // Pick theme: no job = green, special = red, normal = orange
-            const jobColor = !hasJob ? 'emerald' : isSpecial ? 'red' : 'orange';
+            const jobColor = !onJob ? 'emerald' : isSpecial ? 'red' : 'orange';
 
             document.getElementById('cargo-card').className = `mt-2 p-4 bg-slate-800/40 rounded-xl border border-${jobColor}-500/20 flex items-center justify-between shadow-lg`;
-            document.getElementById('cargo-icon').innerText = !hasJob ? '🗺️' : isSpecial ? '🚧' : '📦';
-            document.getElementById('cargo-name').innerHTML = hasJob
+            document.getElementById('cargo-icon').innerText = !onJob ? '🗺️' : isSpecial ? '🚧' : '📦';
+            document.getElementById('cargo-name').innerHTML = onJob
                 ? `${data.cargoName} <span class="text-sm text-slate-400 font-normal ml-1">(${(data.cargoMass / 1000).toFixed(1)} 公噸)</span>`
                 : '--';
             document.getElementById('cargo-destination').innerText = data.cityDestination ? `往${data.cityDestination}` : '--';
             document.getElementById('cargo-destination').className = `text-[11px] text-${jobColor}-400 font-bold uppercase tracking-[0.2em] mt-0.5 flex items-center`;
             const statusEl = document.getElementById('cargo-status');
-            statusEl.innerText = !hasJob ? '無工作' : isSpecial ? '特殊工作' : '工作中';
+            statusEl.innerText = !onJob ? '無工作' : isSpecial ? '特殊工作' : '工作中';
             statusEl.className = `text-xs text-${jobColor}-500 font-bold bg-${jobColor}-500/10 px-3 py-1 rounded-full border border-${jobColor}-500/30`;
 
             const navKm = (data.navigationDistance / 1000);
@@ -423,7 +443,7 @@
             // === Damage ===
             updateDamageCell('damage-truck', data.damageTruck);
             updateDamageCell('damage-trailer', data.damageTrailer);
-            if(hasJob) updateDamageCell('damage-cargo', data.damageCargo);
+            if(onJob) updateDamageCell('damage-cargo', data.damageCargo);
             else {
               document.getElementById('damage-cargo').innerText = '--';
               document.getElementById('damage-cargo').className = 'text-2xl font-bold text-slate-400';
@@ -572,6 +592,7 @@
             // --- Job / Cargo ---
             data.cargoName = t.cargoName || "";
             data.cargoMass = t.cargoMass || 0;
+            data.onjob = t.onJob;
             data.isSpecialJob = t.isSpecialJob;
             data.cityDestination = t.cityDestination || "";
 
@@ -598,5 +619,25 @@
         });
       }
     </script>
+
+    <!-- uniform scaling -->
+    <script>
+      // Fixed-viewport scaling: fit 1200×800 into any screen
+      function scaleViewport() {
+          const vp = document.getElementById('viewport');
+          const scaleX = window.innerWidth / 1200;
+          const scaleY = window.innerHeight / 800;
+          const scale = Math.min(scaleX, scaleY);
+          vp.style.transform = `scale(${scale})`;
+          // Center if there's leftover space on one axis
+          const offsetX = (window.innerWidth - 1200 * scale) / 2;
+          const offsetY = (window.innerHeight - 800 * scale) / 2;
+          vp.style.left = offsetX + 'px';
+          vp.style.top = offsetY + 'px';
+      }
+      window.addEventListener('resize', scaleViewport);
+      scaleViewport();
+    </script>
+    
 </body>
 </html>
