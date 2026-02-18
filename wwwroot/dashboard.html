@@ -6,6 +6,7 @@
     <title>ETS2 Dashboard & Radio</title>
     <link rel="stylesheet" href="css/main.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
     <style>
 
         .glass {
@@ -126,7 +127,7 @@
                     </div>
 
                     <div id="limit-container" class="transition-all duration-300">
-                        <div class="w-14 h-14 rounded-full border-[5px] border-red-600 bg-white text-black flex items-center justify-center font-bold text-xl shadow-inner">
+                        <div class="w-14 h-14 rounded-full border-[5px] border-red-600 bg-white text-black flex items-center justify-center font-bold text-2xl shadow-inner">
                             <span id="limit-val">80</span>
                         </div>
                     </div>
@@ -158,7 +159,11 @@
         <div class="col-span-12 md:col-span-7 flex flex-col space-y-6">
             <div class="glass p-3 flex justify-between items-center px-6">
                 <div class="speedo-font font-bold text-orange-500 tracking-wider text-lg">TruckerM3U8 2.0</div>
-                <div class="flex space-x-4">
+                <div class="flex items-center space-x-4">
+                    <div id="game-badge" class="flex items-center space-x-1.5 text-xs font-bold px-3 py-1 rounded-full border border-slate-600 text-slate-500">
+                        <span id="game-badge-dot" class="w-2 h-2 rounded-full bg-slate-600"></span>
+                        <span id="game-badge-text">Disconnected</span>
+                    </div>
                     <button class="hover:text-orange-500 transition text-sm font-bold" onclick="toggleTheme()">🌓</button>
                 </div>
             </div>
@@ -215,11 +220,11 @@
                 <div class="widget-title">車輛概要</div>
                 <div class="grid grid-cols-3 gap-4 mt-4">
                     <div class="text-center p-3 bg-slate-800/30 rounded-lg border border-white/5">
-                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold">車輛損壞</div>
+                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold">車輛損壞 (最大)</div>
                         <div class="text-2xl font-bold" id="damage-truck">-%</div>
                     </div>
                     <div class="text-center p-3 bg-slate-800/30 rounded-lg border border-white/5">
-                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold">拖車損壞</div>
+                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold">拖車損壞 (最大)</div>
                         <div class="text-2xl font-bold" id="damage-trailer">-%</div>
                     </div>
                     <div class="text-center p-3 bg-slate-800/30 rounded-lg border border-white/5">
@@ -261,22 +266,22 @@
     </div>
 
     <script>
-        const radioListData = [
+        let radioListData = [
             { name: "Trucker FM", url: "http://stream.trucker.fm/live" },
             { name: "Simulator Radio", url: "https://stream.simulatorradio.com/8000/stream" },
             { name: "Euro Truck Radio", url: "http://radio.eurotruck.com/stream" }
         ];
         let isDark = true;
-        const useMockData = true;
+        const useMockData = false;  // use "fake" data to simulate?
         let connectedGame = undefined;  // `Ets2` | `Ats` | `mocked`
         let data = {
             speed: 0,
-            gear: `11`,
+            gear: `N`,
             cruiseSpeed: 0,
             speedLimit: 0,
 
             totalOdo: 0,
-            time: new Date(0),
+            time: 0,  // Current Game Time. in min
             tripOdo: 0,
             rpm: 0,
             rpmMax: 0,
@@ -289,8 +294,8 @@
             warning: false,
             engineEnabled: false,
 
-            nextRestStop: new Date(0),
-            fuelAmount: 788,
+            nextRestStopValue: 0,  // Next rest time (in minutes)
+            fuelAmount: 0,
             fuelCapacity: 1000,
 
             cargoName: "",
@@ -328,9 +333,23 @@
 
         // UI rendering — writes `data` to DOM
         function updateUI() {
+            // === Connection badge ===
+            const badgeDot = document.getElementById('game-badge-dot');
+            const badgeText = document.getElementById('game-badge-text');
+            const badge = document.getElementById('game-badge');
+            if (connectedGame) {
+                const label = connectedGame === 'Ets2' ? 'ETS2' : connectedGame === 'Ats' ? 'ATS' : connectedGame;
+                badgeText.innerText = label;
+                badgeDot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+                badge.className = 'flex items-center space-x-1.5 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/30 text-emerald-400';
+            } else {
+                badgeText.innerText = 'Disconnected';
+                badgeDot.className = 'w-2 h-2 rounded-full bg-slate-600';
+                badge.className = 'flex items-center space-x-1.5 text-xs font-bold px-3 py-1 rounded-full border border-slate-600 text-slate-500';
+            }
             // === Speedometer cluster ===
             document.getElementById('speed-val').innerText = Math.round(data.speed);
-            document.getElementById('gear-val').innerText = data.gear;
+            document.getElementById('gear-val').innerText = data.gear===0?'N': data.gear<0?`R${Math.abs(data.gear)}`: data.gear;
             document.getElementById('total-odo').innerText = Math.floor(data.totalOdo) + 'km';
             document.getElementById('trip-odo').innerText = data.tripOdo.toFixed(1) + 'km';
 
@@ -345,13 +364,14 @@
             const limitContainer = document.getElementById('limit-container');
             if (data.speedLimit > 0) {
                 limitContainer.style.opacity = "1";
-                document.getElementById('limit-val').innerText = data.speedLimit;
+                document.getElementById('limit-val').innerText = Math.round(data.speedLimit);
             } else {
                 limitContainer.style.opacity = "0";
             }
 
-
-            document.getElementById('game-time').innerText = data.time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });  // HH:mm
+            let timeH = Math.floor(data.time%1440/60);
+            let timeM = data.time%60;
+            document.getElementById('game-time').innerText = `${String(timeH).padStart(2, '0')}:${String(timeM).padStart(2, '0')}`;  
 
             const rpmPercent = Math.min(data.rpm / data.rpmMax, 1);
             document.getElementById('rpm-gauge').style.strokeDashoffset = 880 - (440 * rpmPercent);
@@ -366,8 +386,8 @@
             toggleLight('engine-warning-light', data.warning, 'light-on-red');
 
             // === Fatigue / Rest stop ===
-            let nextRestH = data.nextRestStop.getHours();
-            let nextRestM = data.nextRestStop.getMinutes();
+            let nextRestH = Math.floor(data.nextRestStopValue/60);
+            let nextRestM = data.nextRestStopValue%60;
             document.getElementById('sleep-text').innerText = `${String(nextRestH).padStart(2, '0')}:${String(nextRestM).padStart(2, '0')}`;
             const restPercent = Math.min(100, Math.max(0, (60*nextRestH + nextRestM) / (11 * 60) * 100));  // 11h max drive time
             document.getElementById('sleep-bar').style.width = restPercent + '%';
@@ -386,7 +406,7 @@
             document.getElementById('cargo-card').className = `mt-2 p-4 bg-slate-800/40 rounded-xl border border-${jobColor}-500/20 flex items-center justify-between shadow-lg`;
             document.getElementById('cargo-icon').innerText = !hasJob ? '🗺️' : isSpecial ? '🚧' : '📦';
             document.getElementById('cargo-name').innerHTML = hasJob
-                ? `${data.cargoName} <span class="text-sm text-slate-400 font-normal ml-1">(${(data.cargoMass / 1000).toFixed(0)} 公噸)</span>`
+                ? `${data.cargoName} <span class="text-sm text-slate-400 font-normal ml-1">(${(data.cargoMass / 1000).toFixed(1)} 公噸)</span>`
                 : '--';
             document.getElementById('cargo-destination').innerText = data.cityDestination ? `往${data.cityDestination}` : '--';
             document.getElementById('cargo-destination').className = `text-[11px] text-${jobColor}-400 font-bold uppercase tracking-[0.2em] mt-0.5 flex items-center`;
@@ -403,7 +423,11 @@
             // === Damage ===
             updateDamageCell('damage-truck', data.damageTruck);
             updateDamageCell('damage-trailer', data.damageTrailer);
-            updateDamageCell('damage-cargo', data.damageCargo);
+            if(hasJob) updateDamageCell('damage-cargo', data.damageCargo);
+            else {
+              document.getElementById('damage-cargo').innerText = '--';
+              document.getElementById('damage-cargo').className = 'text-2xl font-bold text-slate-400';
+            }
         }
 
         function toggleLight(id, isOn, className) {
@@ -452,8 +476,8 @@
             const increment = data.speed * 0.001;
             data.totalOdo += increment;
             data.tripOdo += increment;  
-            data.time.setSeconds(data.time.getSeconds() + 5);     
-            data.nextRestStop.setSeconds(data.nextRestStop.getSeconds() - 5);            
+            data.time += 0.05; 
+            data.nextRestStopValue -= 0.05;
         }
         
         data.rpmMax = 2500;
@@ -461,7 +485,7 @@
         data.tripOdo = Math.random() * data.totalOdo;
         data.fuelCapacity = 1000;
         data.fuelAmount = Math.random() * data.fuelCapacity;
-        data.nextRestStop = new Date(((Math.random()*11)-8) * 60 * 60 * 1000);
+        data.nextRestStopValue = (Math.random()*11) * 60;
 
         window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 's') data.speedLimit = data.speedLimit === 0 ? 80 : 0;
@@ -471,7 +495,7 @@
             if (e.key.toLowerCase() === '[') data.leftIndicator = !data.leftIndicator;
             if (e.key.toLowerCase() === ']') data.rightIndicator = !data.rightIndicator;
             if (e.key.toLowerCase() === 'f') data.fuelAmount = Math.random() * data.fuelCapacity;
-            if (e.key.toLowerCase() === 'r') data.nextRestStop = new Date(((Math.random()*11)-8) * 60 * 60 * 1000);
+            if (e.key.toLowerCase() === 'r') data.nextRestStopValue = (Math.random()*11) * 60;
             if (e.key.toLowerCase() === 'j') {
               data.isSpecialJob = data.cargoName ? false : Math.random()>0.5;
               data.cargoMass = data.cargoName ? 0 : Math.floor(Math.random() * 20)*1000 + 1000;
@@ -494,7 +518,85 @@
 
     <!-- Real Data -->
     <script>
-      
+      if (!useMockData) {
+        let tripOdoBase = null;  // first odometer reading, used to calculate trip delta
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/telemetryHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveTelemetry", t => {
+            connectedGame = t.game;  // 'Ets2' | 'Ats'
+
+            // --- Speedometer cluster ---
+            data.speed = Math.abs(t.speedKph);
+            data.gear = t.gearDashboard;
+            data.cruiseSpeed = t.cruiseControlActive ? Math.abs(t.cruiseControlSpeedKph) : 0;
+            data.speedLimit = Math.abs(t.speedLimitKph);
+
+            // --- Odometer / Time ---
+            data.totalOdo = t.odometer;
+            if (tripOdoBase === null) tripOdoBase = t.odometer;
+            data.tripOdo = t.odometer - tripOdoBase;
+
+            // GameTime = total in-game minutes (uint). Only HH:mm matters.
+            data.time = t.gameTime;
+
+            // --- Engine ---
+            data.rpm = t.rpm;
+            data.rpmMax = t.engineRpmMax;
+            data.engineEnabled = t.engineEnabled;
+
+            // --- Indicators & Lights ---
+            data.leftIndicator = t.blinkerLeftOn;
+            data.rightIndicator = t.blinkerRightOn;
+            data.beamLow = t.beamLow;
+            data.beamHigh = t.beamHigh;
+            data.parkingBrake = t.parkingBrake;
+
+            // --- Warnings (any warning = on) ---
+            data.warning = t.warningAirPressure || t.warningAirPressureEmergency
+                || t.warningFuel || t.warningAdBlue
+                || t.warningOilPressure || t.warningWaterTemperature
+                || t.warningBatteryVoltage;
+
+            // --- Fatigue ---
+            // NextRestStop is a Frequency object { value: int_minutes_until_rest }
+            data.nextRestStopValue = t.nextRestStop?.value ?? 0;
+
+            // --- Fuel ---
+            data.fuelAmount = t.fuelAmount;
+            data.fuelCapacity = t.fuelCapacity;
+
+            // --- Job / Cargo ---
+            data.cargoName = t.cargoName || "";
+            data.cargoMass = t.cargoMass || 0;
+            data.isSpecialJob = t.isSpecialJob;
+            data.cityDestination = t.cityDestination || "";
+
+            // --- Navigation ---
+            data.navigationDistance = t.navigationDistance;
+            data.navigationTime = t.navigationTime;
+
+            // --- Damage ---            
+            data.damageTruck = Math.max(t.damageEngine, t.damageTransmission, t.damageCabin, t.damageChassis, t.damageWheels);  // TODO how to calc?
+            data.damageTrailer = Math.max(t.trailer0DamageBody, t.trailer0DamageChassis, t.trailer0DamageWheels);
+            data.damageCargo = t.cargoDamage;
+        });
+
+        connection.onreconnecting(() => console.log('[Dashboard] SignalR reconnecting...'));
+        connection.onreconnected(() => console.log('[Dashboard] SignalR reconnected'));
+        connection.onclose(() => { connectedGame = undefined; console.log('[Dashboard] SignalR closed'); });
+        connection.start()
+            .then(() => console.log('[Dashboard] SignalR connected'))
+            .catch(err => console.error('[Dashboard] SignalR error:', err));
+
+        // Reset trip odometer with 'i' key
+        window.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'i') tripOdoBase = data.totalOdo;
+        });
+      }
     </script>
 </body>
 </html>
