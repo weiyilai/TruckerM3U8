@@ -4,11 +4,19 @@
     "url": "https://stream.pbs.gov.tw/live/mp3:PBS/playlist.m3u8"
   },
   {
-    "name": "中央廣播電臺",
-    "url": "https://streamak0138.akamaized.net/live0138lh-mbm9/_definst_/rti3/playlist.m3u8"
+    "name": "愛樂電台",
+    "url": "https://www.e-classical.com.tw/index.html"
+  },
+  {
+    "name": "ICRT",
+    "url": "https://stream.rcs.revma.com/x27mfpztxp3vv"
   },
   {
     "name": "中廣音樂網 i radio",
     "url": "https://n12.rcs.revma.com/ks4vsmg3qtzuv?rj-ttl=5"
+  },
+  {
+    "name": "TVBS Youtube直播",
+    "url": "https://www.youtube.com/live/m_dhMSvUCIc"
   }
 ]

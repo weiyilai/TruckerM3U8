@@ -20,6 +20,12 @@
     <None Update="ThirdParty\ffmpeg.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ThirdParty\yt-dlp.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ThirdParty\scs-telemetry_v_1_12_1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <!-- Exclude unwanted SCSSdkClient files (the rest are auto-included by the SDK) -->

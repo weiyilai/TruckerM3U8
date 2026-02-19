@@ -54,11 +54,48 @@ namespace TruckerM3U8.Services
                 _logger.LogInformation($"Stop the last FFMPEG session");
             }
 
+            // YT-DLP
+            // run yt-dlp -g 'URL'
+            // get the direct m3u8 url, if the url is m3u8, use it directly
+            string playbackUrl = SourceUrl;
+            if(SourceUrl.EndsWith(".m3u8"))
+            {
+                playbackUrl = SourceUrl;
+            }
+            else
+            {
+                _logger.LogInformation($"Not a M3U8 stream, fetching direct URL from {SourceUrl}");
+                using(var ytDlpProcess = new Process())
+                {
+                    ytDlpProcess.StartInfo.FileName = @"ThirdParty/yt-dlp.exe";
+                    ytDlpProcess.StartInfo.Arguments = $"-g \"{SourceUrl}\"";
+                    ytDlpProcess.StartInfo.UseShellExecute = false;
+                    ytDlpProcess.StartInfo.RedirectStandardOutput = true;
+                    ytDlpProcess.StartInfo.RedirectStandardError = true;
+                    ytDlpProcess.StartInfo.CreateNoWindow = true;
+                    ytDlpProcess.Start();
+                    playbackUrl = ytDlpProcess.StandardOutput.ReadToEnd().Trim();
+                    string error = ytDlpProcess.StandardError.ReadToEnd();
+                    ytDlpProcess.WaitForExit();
+
+                    if (ytDlpProcess.ExitCode != 0)
+                    {
+                        _logger.LogError($"yt-dlp error (ExitCode {ytDlpProcess.ExitCode}): {error}");
+                    }
+                    if (string.IsNullOrEmpty(playbackUrl))
+                    {
+                        _logger.LogError("yt-dlp returned no playback URL.");
+                        return; // Stop processing if no URL found
+                    }
+                }
+            }
+            _logger.LogInformation($"Playback URL: {playbackUrl}");
+
             // FFMPEG
             _ffmpegProcess = new Process();
             _ffmpegProcess.StartInfo.FileName = @"ThirdParty/ffmpeg.exe";
             _ffmpegProcess.StartInfo.Arguments =
-                $"-re -i {SourceUrl} -listen 1 -c libmp3lame -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 4 -f mp3 tcp://127.0.0.1:1049";
+                $"-re -i {playbackUrl} -listen 1 -c libmp3lame -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 4 -f mp3 tcp://127.0.0.1:1049";
             //_ffmpegProcess.StartInfo.CreateNoWindow = true; // uncomment to display FFMPEG logs            
             _ffmpegProcess.Start();
             _logger.LogInformation($"FFMPEG started (PID={_ffmpegProcess.Id})");
