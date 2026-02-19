@@ -13,6 +13,10 @@ builder.Services.AddHostedService<TelemetryService>();
 
 var app = builder.Build();
 
+app.MapGet("/version", () =>
+{
+    return "2.0";
+});
 
 app.Map("/mp3", async (HttpContext context, HttpResponse response) =>
 {
@@ -36,11 +40,6 @@ app.Map("/mp3", async (HttpContext context, HttpResponse response) =>
         // cleanup
         restreamService.UnregisterStream(response.Body);
     }
-});
-
-app.MapGet("/version", () =>
-{
-    return "2.0";
 });
 
 app.MapGet("/sourceUrl", () =>
@@ -71,7 +70,7 @@ app.MapHub<TelemetryHub>("/telemetryHub");
 // 啟動時開啟瀏覽器
 if (app.Environment.IsProduction())
 {
-    Process.Start("explorer", "http://localhost:3378/settings.html");    
+    Process.Start("explorer", "http://localhost:3378/dashboard.html");    
 }
 
 app.Run("http://0.0.0.0:3378");

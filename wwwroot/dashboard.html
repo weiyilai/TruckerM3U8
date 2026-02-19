@@ -176,13 +176,17 @@
         <!-- RHS 資訊區 -->
         <div class="col-span-7 flex flex-col space-y-6">
             <div class="glass p-3 flex justify-between items-center px-6">
-                <div class="speedo-font font-bold text-orange-500 tracking-wider text-lg">TruckerM3U8 2.0</div>
+                <div class="speedo-font font-bold text-orange-500 tracking-wider text-lg">
+                    TruckerM3U8
+                    <span class="text-sm" id="version-code">-.-</span>
+                </div>
                 <div class="flex items-center space-x-4">
                     <div id="game-badge" class="flex items-center space-x-1.5 text-xs font-bold px-3 py-1 rounded-full border border-slate-600 text-slate-500">
                         <span id="game-badge-dot" class="w-2 h-2 rounded-full bg-slate-600"></span>
                         <span id="game-badge-text">Disconnected</span>
                     </div>
                     <button class="hover:text-orange-500 transition text-sm font-bold" onclick="toggleTheme()">🌓</button>
+                    <button class="hover:text-orange-500 transition text-sm font-bold" onclick="toggleInfoModal()">ℹ️</button>
                 </div>
             </div>
 
@@ -282,12 +286,68 @@
             <div class="space-y-2 max-h-[60vh] overflow-y-auto pr-2" id="playlist-container"></div>
         </div>
     </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" onclick="toggleInfoModal()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:50; align-items:center; justify-content:center;">
+        <div class="glass w-full max-w-xl p-6 m-4" onclick="event.stopPropagation()" style="max-height:85vh; overflow-y:auto;">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+                <h3 class="text-xl font-bold">TruckerM3U8 Info</h3>
+                <button onclick="toggleInfoModal()" class="text-2xl">×</button>
+            </div>
+            
+            <div class="mb-5">
+                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider">How to use</div>
+                <p class="text-xs text-slate-400 mb-2">
+                    TODO...
+                </p>
+            </div>
+
+            <!-- Live Stream URL -->
+            <div class="mb-5">
+                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider">Add TruckerM3U8 URL into ETS2/ATS</div>
+                <p class="text-xs text-slate-400 mb-2">Writes TruckerM3U8 URL into ETS2/ATS live stream list so you can play it ingame.</p>
+                <div class="space-y-1 text-sm">
+                    <div class="flex justify-between"><span class="text-slate-400">ETS2</span><span id="info-ets2-stream" class="font-bold">Loading...</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">ATS</span><span id="info-ats-stream" class="font-bold">Loading...</span></div>
+                </div>
+                <button id="info-apply-stream-btn" onclick="infoApplyLiveStream()" style="display:none" class="mt-2 w-full text-sm font-bold bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 px-4 py-2 rounded-lg border border-orange-500/30 transition">
+                    Add TruckerM3U8 URL To Stream List
+                </button>
+            </div>
+
+            <!-- Telemetry DLL -->
+            <div class="mb-5">
+                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider">Add Telemetry SDK into ETS2/ATS (Optional)</div>
+                <p class="text-xs text-slate-400 mb-2">Telemetry SDK is used to get the game data and send it to the web page. You can still use the radio without telemetry installed.</p>
+                <div class="space-y-1 text-sm">
+                    <div class="flex justify-between"><span class="text-slate-400">ETS2</span><span id="info-ets2-telemetry" class="font-bold">Loading...</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">ATS</span><span id="info-ats-telemetry" class="font-bold">Loading...</span></div>
+                </div>
+                <button id="info-apply-telemetry-btn" onclick="infoApplyTelemetryDll()" style="display:none" class="mt-2 w-full text-sm font-bold bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 px-4 py-2 rounded-lg border border-orange-500/30 transition">
+                    Install Telemetry DLL
+                </button>
+            </div>
+
+            <!-- Troubleshoot -->
+            <div class="mb-5">
+                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider">Doesn't work?</div>
+                <p class="text-xs text-slate-400">Try download newer FFMPEG version from <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">here</a>. Simply replace <code class="bg-slate-700 px-1 rounded">ThirdParty/ffmpeg.exe</code>.</p>
+            </div>
+
+            <!-- Version -->
+            <div class="text-xs text-slate-500 border-t border-slate-700 pt-3 flex justify-between items-center">
+                <span id="info-version">v.--</span>
+                <a href="https://github.com/JCxYIS/TruckerM3U8/releases/latest" target="_blank" class="text-orange-400 underline">Check latest version</a>
+            </div>
+        </div>
+    </div>
+
     </div><!-- /#viewport -->
 
     <script>
         let radioListData = [];
         let isDark = true;
-        const useMockData = true;  // use "fake" data to simulate?
+        const useMockData = false;  // use "fake" data to simulate?
         let connectedGame = undefined;  // `Ets2` | `Ats` | `mocked`
         let data = {
             speed: 0,
@@ -336,7 +396,13 @@
         function toggleTheme() {
             isDark = !isDark;
             document.getElementById('app-body').classList.toggle('light-theme');
-        }        
+        }
+
+        function toggleInfoModal() {
+            const modal = document.getElementById('info-modal');
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+        toggleInfoModal();
 
         // UI rendering — writes `data` to DOM
         function updateUI() {
@@ -749,6 +815,72 @@
 
       fetchRadioList();
       fetchCurrentPlaying();
+    </script>
+
+    <!-- Info Modal Logic -->
+    <script>
+      const infoStateText = (state) => {
+          switch (state) {
+              case -1: return '❓ Not found';
+              case  0: return '\u26a0\ufe0f Missing';
+              case  1: return '\u2705 OK';
+              default: return 'Unknown';
+          }
+      };
+
+      async function infoFetchStreamCheck() {
+          try {
+              const resp = await fetch('/api/fileCheck/liveStreamListCheck');
+              const d = await resp.json();
+              document.getElementById('info-ets2-stream').textContent = infoStateText(d.ets2);
+              document.getElementById('info-ats-stream').textContent = infoStateText(d.ats);
+              document.getElementById('info-apply-stream-btn').style.display =
+                  (d.ets2 === 0 || d.ats === 0) ? '' : 'none';
+          } catch (e) {
+              console.error('[Info] Stream check failed:', e);
+          }
+      }
+
+      async function infoApplyLiveStream() {
+          if (!confirm('Add TruckerM3U8 URL to your ETS2/ATS live stream list?')) return;
+          await fetch('/api/fileCheck/liveStreamListApply');
+          infoFetchStreamCheck();
+      }
+
+      async function infoFetchTelemetryCheck() {
+          try {
+              const resp = await fetch('/api/fileCheck/telemetryDllCheck');
+              const d = await resp.json();
+              document.getElementById('info-ets2-telemetry').textContent = infoStateText(d.ets2);
+              document.getElementById('info-ats-telemetry').textContent = infoStateText(d.ats);
+              document.getElementById('info-apply-telemetry-btn').style.display =
+                  (d.ets2 === 0 || d.ats === 0) ? '' : 'none';
+          } catch (e) {
+              console.error('[Info] Telemetry check failed:', e);
+          }
+      }
+
+      async function infoApplyTelemetryDll() {
+          if (!confirm('Install Telemetry DLL into ETS2/ATS?')) return;
+          await fetch('/api/fileCheck/telemetryDllApply');
+          infoFetchTelemetryCheck();
+      }
+
+      async function infoFetchVersion() {
+          try {
+              const resp = await fetch('/version');
+              const ver = await resp.text();
+              document.getElementById('version-code').textContent = ver;
+              document.getElementById('info-version').textContent = 'v.' + ver;
+          } catch (e) {
+              console.error('[Info] Version fetch failed:', e);
+          }
+      }
+
+      // Fetch all info on page load
+      infoFetchStreamCheck();
+      infoFetchTelemetryCheck();
+      infoFetchVersion();
     </script>
     
 </body>

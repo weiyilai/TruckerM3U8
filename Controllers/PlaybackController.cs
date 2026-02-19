@@ -29,51 +29,53 @@ public class PlaybackController : ControllerBase
         return Ok(list);
     }
 
+    // 安全問題，POST DELETE 暫時停用
+
     /// <summary>
     /// POST /api/playback/radiolist — add or update an entry (matched by name).
     /// Body: { "name": "...", "url": "..." }
     /// </summary>
-    [HttpPost("radiolist")]
-    public IActionResult PostRadioEntry([FromBody] RadioEntry entry)
-    {
-        if (string.IsNullOrWhiteSpace(entry.name) || string.IsNullOrWhiteSpace(entry.url))
-            return BadRequest("Both 'name' and 'url' are required.");
+    // [HttpPost("radiolist")]
+    // public IActionResult PostRadioEntry([FromBody] RadioEntry entry)
+    // {
+    //     if (string.IsNullOrWhiteSpace(entry.name) || string.IsNullOrWhiteSpace(entry.url))
+    //         return BadRequest("Both 'name' and 'url' are required.");
 
-        lock (FileLock)
-        {
-            var list = ReadList();
+    //     lock (FileLock)
+    //     {
+    //         var list = ReadList();
 
-            var existing = list.FindIndex(r => r.name == entry.name);
-            if (existing >= 0)
-                list[existing] = entry;   // edit
-            else
-                list.Add(entry);          // create
+    //         var existing = list.FindIndex(r => r.name == entry.name);
+    //         if (existing >= 0)
+    //             list[existing] = entry;   // edit
+    //         else
+    //             list.Add(entry);          // create
 
-            WriteList(list);
-        }
+    //         WriteList(list);
+    //     }
 
-        return Ok(ReadList());
-    }
+    //     return Ok(ReadList());
+    // }
 
     /// <summary>
     /// DELETE /api/playback/radiolist — remove an entry by name.
     /// Body: { "name": "..." }
     /// </summary>
-    [HttpDelete("radiolist")]
-    public IActionResult DeleteRadioEntry([FromBody] RadioEntry entry)
-    {
-        if (string.IsNullOrWhiteSpace(entry.name))
-            return BadRequest("'name' is required.");
+    // [HttpDelete("radiolist")]
+    // public IActionResult DeleteRadioEntry([FromBody] RadioEntry entry)
+    // {
+    //     if (string.IsNullOrWhiteSpace(entry.name))
+    //         return BadRequest("'name' is required.");
 
-        lock (FileLock)
-        {
-            var list = ReadList();
-            list.RemoveAll(r => r.name == entry.name);
-            WriteList(list);
-        }
+    //     lock (FileLock)
+    //     {
+    //         var list = ReadList();
+    //         list.RemoveAll(r => r.name == entry.name);
+    //         WriteList(list);
+    //     }
 
-        return Ok(ReadList());
-    }
+    //     return Ok(ReadList());
+    // }
 
     // ─── helpers ────────────────────────────────────────────────────
 
