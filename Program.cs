@@ -8,7 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<RestreamService>();
 builder.Services.AddSignalR();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+});
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+});
 builder.Services.AddHostedService<TelemetryService>();
 
 var app = builder.Build();
@@ -89,3 +97,12 @@ if (app.Environment.IsProduction())
 }
 
 app.Run("http://0.0.0.0:3378");
+
+
+// Trimmed Code (AOT) will not include full object
+// System.NotSupportedException: JsonTypeInfo metadata for type 'System.String' was not provided by TypeInfoResolver of type '[]'. 
+[System.Text.Json.Serialization.JsonSerializable(typeof(string))]
+[System.Text.Json.Serialization.JsonSerializable(typeof(System.Collections.Generic.Dictionary<string, int>))]
+internal partial class AppJsonSerializerContext : System.Text.Json.Serialization.JsonSerializerContext
+{
+}

@@ -754,7 +754,7 @@
             .build();
 
         connection.on("ReceiveTelemetry", t => {
-            connectedGame = t.game;  // 'Ets2' | 'Ats'
+            connectedGame = t.game == 'Unknown' ? undefined : t.game;  // 'Ets2' | 'Ats' | undefined
 
             // --- Speedometer cluster ---
             data.speed = Math.abs(t.speedKph);
