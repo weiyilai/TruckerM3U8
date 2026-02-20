@@ -3,7 +3,7 @@
 Convert (not only) m3u8 stream to mp3 that ETS2/ATS can recognize.  
 Now with an interactive dashboard!
 
-![eng_preview](https://static.jcxyis.com/images/Mv03k359QB.webp)
+![preview](https://static.jcxyis.com/images/B5uo8k9XaP.webp)
 
 ## Features
 
@@ -32,6 +32,26 @@ Now with an interactive dashboard!
 
 ## Interface
 
+![eng_preview](https://static.jcxyis.com/images/Mv03k359QB.webp)
+
+- Left Panel
+  - Left/Right blinker
+  - RPM/Speed
+  - Cruise Control / Gear / Speed Limit
+  - Odometer / Current Time / Trip Odometer (since Dashboard started, press `i` to reset)
+  - Low Beam / High Beam / Parking Brake / Warning Light / Engine Light
+- Right Panel 0
+  - Connected Game | Language (ZH/EN) | Infomation Toggle
+- Right Panel 1
+  - Fatigue / Fuel
+- Right Panel 2 (Navigation)
+  - Job
+  - Navigation Distance / ETA
+- Right Panel 3 (Vehicle Status)
+  - Truck Damage / Trailer Damage / Cargo Damage
+- Bottom Panel
+  - Radio URL | Radio Name | Last | Play/Stop | Next | Radio List
+
 ![info](https://static.jcxyis.com/images/5XxL2OFSZd.webp)
 
 ![radiostations](https://static.jcxyis.com/images/DiwW0PAxMR.webp)
@@ -54,9 +74,9 @@ The application will automatically parse and display it in the radio station lis
 ### How it works
 
 ```text
-+----------+      +--------+      (Download & convert via yt-dlp & FFMPEG)
-| YouTube/ | ---> | FFmpeg |
-| M3U8     |      +--------+
++----------+      +--------+      (Download & convert via yt-dlp & FFmpeg)
+| Stream   | ---> | FFmpeg |
+| URL      |      +--------+
 +----------+          |
                       | Output MP3 stream (Port 1049)
                       v
