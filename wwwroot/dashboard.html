@@ -185,34 +185,38 @@
                         <span id="game-badge-dot" class="w-2 h-2 rounded-full bg-slate-600"></span>
                         <span id="game-badge-text">Disconnected</span>
                     </div>
-                    <button class="hover:text-orange-500 transition text-sm font-bold" onclick="toggleTheme()">🌓</button>
+                    <button class="hover:text-orange-500 transition text-sm font-bold flex items-center " onclick="toggleLang()">
+                        <span>🌐</span>
+                        <span id="lang-indicator" class="text-[10px] text-slate-400 uppercase top-0.5 relative">lang</span>
+                    </button>
+                    <!-- <button class="hover:text-orange-500 transition text-sm font-bold" onclick="toggleTheme()">🌓</button> -->
                     <button class="hover:text-orange-500 transition text-sm font-bold" onclick="toggleInfoModal()">ℹ️</button>
                 </div>
             </div>
 
-            <!-- 小工具：監測區域 -->
+            <!-- 小工具 R1：監測區域 -->
             <div class="grid grid-cols-2 gap-6">
                 <div class="glass p-5">
-                    <div class="widget-title">疲勞監測</div>
+                    <div class="widget-title" data-i18n="fatigue">疲勞監測</div>
                     <div class="flex justify-between items-end mb-2">
                         <span class="text-2xl font-bold" id="sleep-text">--h --m</span>
-                        <span class="text-xs text-slate-400 pb-1">距離休息</span>
+                        <span class="text-xs text-slate-400 pb-1" data-i18n="time_to_rest">距離休息</span>
                     </div>
                     <div class="progress-bar"><div id="sleep-bar" class="progress-fill bg-orange-500" style="width: 0%;"></div></div>
                 </div>
                 <div class="glass p-5">
-                    <div class="widget-title">燃油狀態</div>
+                    <div class="widget-title" data-i18n="fuel_status">燃油狀態</div>
                     <div class="flex justify-between items-end mb-2">
                         <span class="text-2xl font-bold" id="fuel-text">0 L</span>
-                        <span class="text-xs text-slate-400 pb-1">剩餘油量</span>
+                        <span class="text-xs text-slate-400 pb-1" data-i18n="fuel_remain">剩餘油量</span>
                     </div>
                     <div class="progress-bar"><div id="fuel-bar" class="progress-fill bg-orange-500" style="width: 0%;"></div></div>
                 </div>
             </div>
 
-            <!-- 小工具：行程導航 -->
+            <!-- 小工具 R2：行程導航 -->
             <div class="glass p-6 flex-1 flex flex-col">
-                <div class="widget-title">行程導航</div>
+                <div class="widget-title" data-i18n="navigation">行程導航</div>
                 <!-- 工作綱要 -->
                 <div id="cargo-card" class="mt-2 p-4 bg-slate-800/40 rounded-xl border border-emerald-500/20 flex items-center justify-between shadow-lg">
                     <div class="flex items-center space-x-4">
@@ -227,7 +231,7 @@
                 <!-- 導航資訊 -->
                 <div class="grid grid-cols-2 gap-4 mt-4">
                     <div class="text-center p-3 bg-slate-800/30 rounded-lg border border-white/5">
-                        <div class="text-xs text-slate-500 mb-1">目的地距離</div>
+                        <div class="text-xs text-slate-500 mb-1" data-i18n="distance">目的地距離</div>
                         <div class="text-2xl font-bold" id="nav-distance">-- <small class="text-xs">km</small></div>
                     </div>
                     <div class="text-center p-3 bg-slate-800/30 rounded-lg border border-white/5">
@@ -237,20 +241,20 @@
                 </div>
             </div>
 
-            <!-- 小工具：車損概要 (優化排版) -->
+            <!-- 小工具 R3：車損概要 -->
             <div class="glass p-5">
-                <div class="widget-title">車輛概要</div>
+                <div class="widget-title" data-i18n="vehicle_stat">車輛概要</div>
                 <div class="grid grid-cols-3 gap-4 mt-4">
                     <div class="text-center p-3 bg-slate-800/30 rounded-lg border border-white/5">
-                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold">車輛損壞 (最大)</div>
+                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold" data-i18n="truck_dmg">車輛損壞 (最大)</div>
                         <div class="text-2xl font-bold" id="damage-truck">-%</div>
                     </div>
                     <div class="text-center p-3 bg-slate-800/30 rounded-lg border border-white/5">
-                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold">拖車損壞 (最大)</div>
+                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold" data-i18n="trailer_dmg">拖車損壞 (最大)</div>
                         <div class="text-2xl font-bold" id="damage-trailer">-%</div>
                     </div>
                     <div class="text-center p-3 bg-slate-800/30 rounded-lg border border-white/5">
-                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold">貨物損壞</div>
+                        <div class="text-xs text-slate-500 mb-1 uppercase font-bold" data-i18n="cargo_dmg">貨物損壞</div>
                         <div class="text-2xl font-bold" id="damage-cargo">-%</div>
                     </div>
                 </div>
@@ -273,15 +277,18 @@
             <button id="radio-next" class="hover:text-orange-500 transition text-2xl">⏭</button>
         </div>
         <div class="flex items-center">
-            <button onclick="togglePlaylist()" class="flex items-center space-x-2 bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition border border-white/10"><span class="text-sm font-bold">電台列表</span></button>
+            <button onclick="togglePlaylist()" class="flex items-center space-x-2 bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition border border-white/10"><span class="text-sm font-bold" data-i18n="radio_list_btn">電台列表</span></button>
         </div>
     </div>
 
     <div id="playlist-modal" onclick="togglePlaylist()">
         <div class="glass w-full max-w-lg p-6 m-4" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-2">
-                <h3 class="text-xl font-bold">電台清單</h3>
+            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+                <h3 class="text-xl font-bold" data-i18n="radio_list_title">電台清單</h3>
                 <button onclick="togglePlaylist()" class="text-2xl">×</button>
+            </div>
+            <div class="text-xs text-slate-400 mb-4" data-i18n-html="radio_custom_hint">
+                You can add your own online radio in <code class="bg-slate-700 px-1 rounded">Data/radio.json</code>.
             </div>
             <div class="space-y-2 max-h-[60vh] overflow-y-auto pr-2" id="playlist-container"></div>
         </div>
@@ -296,58 +303,179 @@
             </div>
             
             <div class="mb-5">
-                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider">How to use</div>
-                <p class="text-xs text-slate-400 mb-2">
-                    TODO...
+                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider" data-i18n="info_how_to">How to use</div>
+                <p class="text-xs text-slate-400 mb-2" id="info_how_to_desc">
+                    See <a href="https://github.com/JCxYIS/TruckerM3U8" target="_blank" class="text-orange-400 hover:underline">GitHub README</a> for more information.
                 </p>
             </div>
 
             <!-- Live Stream URL -->
             <div class="mb-5">
-                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider">Add TruckerM3U8 URL into ETS2/ATS</div>
-                <p class="text-xs text-slate-400 mb-2">Writes TruckerM3U8 URL into ETS2/ATS live stream list so you can play it ingame.</p>
+                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider" data-i18n="info_add_url">Add TruckerM3U8 URL into ETS2/ATS</div>
+                <p class="text-xs text-slate-400 mb-2" data-i18n="info_add_url_desc">Writes TruckerM3U8 URL into ETS2/ATS live stream list so you can play it ingame.</p>
                 <div class="space-y-1 text-sm">
                     <div class="flex justify-between"><span class="text-slate-400">ETS2</span><span id="info-ets2-stream" class="font-bold">Loading...</span></div>
                     <div class="flex justify-between"><span class="text-slate-400">ATS</span><span id="info-ats-stream" class="font-bold">Loading...</span></div>
                 </div>
-                <button id="info-apply-stream-btn" onclick="infoApplyLiveStream()" style="display:none" class="mt-2 w-full text-sm font-bold bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 px-4 py-2 rounded-lg border border-orange-500/30 transition">
+                <button id="info-apply-stream-btn" onclick="infoApplyLiveStream()" style="display:none" class="mt-2 w-full text-sm font-bold bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 px-4 py-2 rounded-lg border border-orange-500/30 transition" data-i18n="info_apply_stream">
                     Add TruckerM3U8 URL To Stream List
                 </button>
             </div>
 
             <!-- Telemetry DLL -->
             <div class="mb-5">
-                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider">Add Telemetry SDK into ETS2/ATS (Optional)</div>
-                <p class="text-xs text-slate-400 mb-2">Telemetry SDK is used to get the game data and send it to the web page. You can still use the radio without telemetry installed.</p>
+                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider" data-i18n="info_add_dll">Add Telemetry SDK into ETS2/ATS (Optional)</div>
+                <p class="text-xs text-slate-400 mb-2" data-i18n="info_add_dll_desc">Telemetry SDK is used to get the game data and send it to the web page. You can still use the radio without telemetry installed.</p>
                 <div class="space-y-1 text-sm">
                     <div class="flex justify-between"><span class="text-slate-400">ETS2</span><span id="info-ets2-telemetry" class="font-bold">Loading...</span></div>
                     <div class="flex justify-between"><span class="text-slate-400">ATS</span><span id="info-ats-telemetry" class="font-bold">Loading...</span></div>
                 </div>
-                <button id="info-apply-telemetry-btn" onclick="infoApplyTelemetryDll()" style="display:none" class="mt-2 w-full text-sm font-bold bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 px-4 py-2 rounded-lg border border-orange-500/30 transition">
+                <button id="info-apply-telemetry-btn" onclick="infoApplyTelemetryDll()" style="display:none" class="mt-2 w-full text-sm font-bold bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 px-4 py-2 rounded-lg border border-orange-500/30 transition" data-i18n="info_apply_dll">
                     Install Telemetry DLL
                 </button>
             </div>
 
             <!-- Troubleshoot -->
             <div class="mb-5">
-                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider">Doesn't work?</div>
-                <p class="text-xs text-slate-400">Try download newer FFMPEG version from <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">here</a>. Simply replace <code class="bg-slate-700 px-1 rounded">ThirdParty/ffmpeg.exe</code>.</p>
+                <div class="text-sm font-bold text-orange-400 mb-2 uppercase tracking-wider" data-i18n="info_trouble">Doesn't work?</div>
+                <p class="text-xs text-slate-400" id="info_trouble_desc">Try download newer FFMPEG version from <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">here</a>. Simply replace <code class="bg-slate-700 px-1 rounded">ThirdParty/ffmpeg.exe</code>.</p>
             </div>
 
             <!-- Version -->
             <div class="text-xs text-slate-500 border-t border-slate-700 pt-3 flex justify-between items-center">
                 <span id="info-version">v.--</span>
-                <a href="https://github.com/JCxYIS/TruckerM3U8/releases/latest" target="_blank" class="text-orange-400 underline">Check latest version</a>
+                <a href="https://github.com/JCxYIS/TruckerM3U8/releases/latest" target="_blank" class="text-orange-400 underline" data-i18n="info_check_update">Check latest version</a>
             </div>
         </div>
     </div>
 
     </div><!-- /#viewport -->
 
+    <!-- Language Support -->
+    <script>
+        const i18n = {
+            "zh": {
+                "fatigue": "疲勞監測",
+                "time_to_rest": "距離休息",
+                "fuel_status": "燃油狀態",
+                "fuel_remain": "剩餘油量",
+                "navigation": "行程導航",
+                "distance": "目的地距離",
+                "vehicle_stat": "車輛概要",
+                "truck_dmg": "車輛損壞 (最大)",
+                "trailer_dmg": "拖車損壞 (最大)",
+                "cargo_dmg": "貨物損壞",
+                "radio_list_btn": "電台列表",
+                "radio_list_title": "電台清單",
+                "ton": "公噸",
+                "to": "往",
+                "no_job": "無工作",
+                "special_job": "特殊工作",
+                "on_job": "工作中",
+                "unnamed_radio": "未命名電台",
+                "in_game_radio": "IN GAME RADIO",
+                
+                "info_how_to": "如何使用",
+                "info_add_url": "加入 TruckerM3U8 URL 至 ETS2/ATS",
+                "info_add_url_desc": "寫入 TruckerM3U8 URL 到遊戲串流清單中，即可在遊戲內電台播放音樂。",
+                "info_apply_stream": "將 URL 加入串流清單",
+                "info_add_dll": "安裝 Telemetry SDK (可選)",
+                "info_add_dll_desc": "Telemetry SDK 用於讀取遊戲資料並傳送至網頁端。即使不安裝也能使用網路電台功能。",
+                "info_apply_dll": "安裝 Telemetry DLL",
+                "info_trouble": "無法運作？",
+                "info_check_update": "檢查最新版本",
+                "radio_custom_hint": "您可以在 <code class=\"bg-slate-700 px-1 rounded\">Data/radio.json</code> 中新增自訂的網路電台。"
+            },
+            "en": {
+                "fatigue": "Fatigue Monitor",
+                "time_to_rest": "Next Rest",
+                "fuel_status": "Fuel Status",
+                "fuel_remain": "Remaining",
+                "navigation": "Navigation",
+                "distance": "Distance",
+                "vehicle_stat": "Vehicle Status",
+                "truck_dmg": "Truck Damage",
+                "trailer_dmg": "Trailer Damage",
+                "cargo_dmg": "Cargo Damage",
+                "radio_list_btn": "Radio Stations",
+                "radio_list_title": "Station List",
+                "ton": "t",
+                "to": "To ",
+                "no_job": "No Job",
+                "special_job": "Special Job",
+                "on_job": "On Job",
+                "unnamed_radio": "Unnamed Station",
+                "in_game_radio": "IN GAME RADIO",
+
+                "info_how_to": "How to use",
+                "info_add_url": "Add TruckerM3U8 URL into ETS2/ATS",
+                "info_add_url_desc": "Writes TruckerM3U8 URL into ETS2/ATS live stream list so you can play it ingame.",
+                "info_apply_stream": "Add URL To Stream List",
+                "info_add_dll": "Add Telemetry SDK (Optional)",
+                "info_add_dll_desc": "Telemetry SDK is used to get game data and send to webpage. You can still use the radio without telemetry.",
+                "info_apply_dll": "Install Telemetry DLL",
+                "info_trouble": "Doesn't work?",
+                "info_check_update": "Check latest version",
+                "radio_custom_hint": "You can add your own online radio in <code class=\"bg-slate-700 px-1 rounded\">Data/radio.json</code>."
+            }
+        };
+
+        let currentLang = localStorage.getItem('trucker_lang') || 'zh';
+        
+        function t(key) {
+            return i18n[currentLang] ? (i18n[currentLang][key] || key) : key;
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            localStorage.setItem('trucker_lang', currentLang);
+            document.getElementById('lang-indicator').innerText = `${currentLang}`;
+            updateStaticText();
+            if (typeof updateUI === 'function') updateUI();
+            if (typeof updateRadioUI === 'function') updateRadioUI();
+        }
+
+        function updateStaticText() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLang] && i18n[currentLang][key]) {
+                    el.innerText = i18n[currentLang][key];
+                }
+            });
+
+            document.querySelectorAll('[data-i18n-html]').forEach(el => {
+                const key = el.getAttribute('data-i18n-html');
+                if (i18n[currentLang] && i18n[currentLang][key]) {
+                    el.innerHTML = i18n[currentLang][key];
+                }
+            });
+            
+            // special cases for links
+            const infoHowToDesc = document.getElementById('info_how_to_desc');
+            if(infoHowToDesc) {
+                infoHowToDesc.innerHTML = currentLang === 'zh' ? 
+                    `詳見 <a href="https://github.com/JCxYIS/TruckerM3U8" target="_blank" class="text-orange-400 hover:underline">GitHub README</a> 說明。` :
+                    `See <a href="https://github.com/JCxYIS/TruckerM3U8" target="_blank" class="text-orange-400 hover:underline">GitHub README</a> for more information.`;
+            }
+                
+            const infoTroubleDesc = document.getElementById('info_trouble_desc');
+            if(infoTroubleDesc) {
+                infoTroubleDesc.innerHTML = currentLang === 'zh' ? 
+                    `請嘗試從 <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">這裡</a> 下載較新的 FFMPEG 版本，並覆蓋 <code class="bg-slate-700 px-1 rounded">ThirdParty/ffmpeg.exe</code>。` :
+                    `Try download newer FFMPEG version from <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">here</a>. Simply replace <code class="bg-slate-700 px-1 rounded">ThirdParty/ffmpeg.exe</code>.`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('lang-indicator').innerText = `${currentLang}`;
+            updateStaticText();
+        });
+    </script>
+
     <script>
         let radioListData = [];
         let isDark = true;
-        const useMockData = false;  // use "fake" data to simulate?
+        let useMockData = false;  // use "fake" data to simulate
         let connectedGame = undefined;  // `Ets2` | `Ats` | `mocked`
         let data = {
             speed: 0,
@@ -402,7 +530,6 @@
             const modal = document.getElementById('info-modal');
             modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
         }
-        toggleInfoModal();
 
         // UI rendering — writes `data` to DOM
         function updateUI() {
@@ -479,12 +606,12 @@
             document.getElementById('cargo-card').className = `mt-2 p-4 bg-slate-800/40 rounded-xl border border-${jobColor}-500/20 flex items-center justify-between shadow-lg`;
             document.getElementById('cargo-icon').innerText = !onJob ? '🗺️' : isSpecial ? '🚧' : '📦';
             document.getElementById('cargo-name').innerHTML = onJob
-                ? `${data.cargoName} <span class="text-sm text-slate-400 font-normal ml-1">(${(data.cargoMass / 1000).toFixed(1)} 公噸)</span>`
+                ? `${data.cargoName} <span class="text-sm text-slate-400 font-normal ml-1">(${(data.cargoMass / 1000).toFixed(1)} ${t('ton')})</span>`
                 : '--';
-            document.getElementById('cargo-destination').innerText = data.onjob ? `往${data.cityDestination}` : '--';
+            document.getElementById('cargo-destination').innerText = data.onjob ? `${t('to')}${data.cityDestination}` : '--';
             document.getElementById('cargo-destination').className = `text-[11px] text-${jobColor}-400 font-bold uppercase tracking-[0.2em] mt-0.5 flex items-center`;
             const statusEl = document.getElementById('cargo-status');
-            statusEl.innerText = !onJob ? '無工作' : isSpecial ? '特殊工作' : '工作中';
+            statusEl.innerText = !onJob ? t('no_job') : isSpecial ? t('special_job') : t('on_job');
             statusEl.className = `text-xs text-${jobColor}-500 font-bold bg-${jobColor}-500/10 px-3 py-1 rounded-full border border-${jobColor}-500/30`;
 
             const navKm = (data.navigationDistance / 1000);
@@ -521,9 +648,11 @@
 
     <!-- Mock Data -->
     <script>
-      if(useMockData) {
         // Mock data generation — pure data, no DOM touching
         function updateMockData() {
+            if(!useMockData) {
+                return;
+            }
             if(data.engineEnabled) {
               data.speed += (Math.random() * 1.1 - 0.1);
               data.rpm = Math.min(1000 + (data.speed * 10) + (Math.random() * 50), data.rpmMax);
@@ -545,43 +674,49 @@
             data.tripOdo += increment;  
             data.time += 0.05; 
             data.nextRestStopValue -= 0.05;
-        }
-        
-        data.rpmMax = 2500;
-        data.totalOdo = Math.random() * 100000;
-        data.tripOdo = Math.random() * data.totalOdo;
-        data.fuelCapacity = 1000;
-        data.fuelAmount = Math.random() * data.fuelCapacity;
-        data.nextRestStopValue = (Math.random()*11) * 60;
+            
+            setTimeout(() => { updateMockData(); }, 100);
+        }                
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key.toLowerCase() === 's') data.speedLimit = data.speedLimit === 0 ? 80 : 0;
-            if (e.key.toLowerCase() === 'c') data.cruiseSpeed = data.cruiseSpeed === 0 ? 85 : 0;
-            if (e.key.toLowerCase() === 'e') data.engineEnabled = !data.engineEnabled;
-            if (e.key.toLowerCase() === 'i') data.tripOdo = 0;
-            if (e.key.toLowerCase() === '[') data.leftIndicator = !data.leftIndicator;
-            if (e.key.toLowerCase() === ']') data.rightIndicator = !data.rightIndicator;
-            if (e.key.toLowerCase() === 'f') data.fuelAmount = Math.random() * data.fuelCapacity;
-            if (e.key.toLowerCase() === 'r') data.nextRestStopValue = (Math.random()*11) * 60;
-            if (e.key.toLowerCase() === 'j') {
-                data.cargoName = data.onJob ? "" : "幸福";
-                data.isSpecialJob = data.onJob ? false : Math.random()>0.5;
-                data.cargoMass = data.onJob ? 0 : Math.floor(Math.random() * 20)*1000 + 1000;
-                data.cityDestination = data.onJob ? "xxx" : "綜藝大集合";
-                data.navigationDistance = data.onJob ? 0 : Math.floor(Math.random() * 1000)*1000 + 1000;
-                data.navigationTime = data.onJob ? 0 : Math.floor(Math.random()*55 * 3600) + 60;
-                data.onjob = !data.onjob;
+      window.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'm') {
+                useMockData = !useMockData;
+                data.rpmMax = 2500;
+                data.totalOdo = Math.random() * 100000;
+                data.tripOdo = Math.random() * data.totalOdo;
+                data.fuelCapacity = 1000;
+                data.fuelAmount = Math.random() * data.fuelCapacity;
+                data.nextRestStopValue = (Math.random()*11) * 60;
+                updateMockData();
+            } 
+            if(useMockData) {
+                if (e.key.toLowerCase() === 's') data.speedLimit = data.speedLimit === 0 ? 80 : 0;
+                if (e.key.toLowerCase() === 'c') data.cruiseSpeed = data.cruiseSpeed === 0 ? 85 : 0;
+                if (e.key.toLowerCase() === 'e') data.engineEnabled = !data.engineEnabled;
+                if (e.key.toLowerCase() === 'i') data.tripOdo = 0;
+                if (e.key.toLowerCase() === '[') data.leftIndicator = !data.leftIndicator;
+                if (e.key.toLowerCase() === ']') data.rightIndicator = !data.rightIndicator;
+                if (e.key.toLowerCase() === 'l') data.beamLow = !data.beamLow;
+                if (e.key.toLowerCase() === 'k') data.beamHigh = !data.beamHigh;
+                if (e.key.toLowerCase() === 'f') data.fuelAmount = Math.random() * data.fuelCapacity;
+                if (e.key.toLowerCase() === 'r') data.nextRestStopValue = (Math.random()*11) * 60;
+                if (e.key.toLowerCase() === 'j') {
+                    data.cargoName = data.onJob ? "" : "幸福";
+                    data.isSpecialJob = data.onJob ? false : Math.random()>0.5;
+                    data.cargoMass = data.onJob ? 0 : Math.floor(Math.random() * 25)*1000 + 1000;
+                    data.cityDestination = data.onJob ? "xxx" : "綜藝大集合";
+                    data.navigationDistance = data.onJob ? 0 : Math.floor(Math.random() * 1000)*1000 + 1000;
+                    data.navigationTime = data.onJob ? 0 : Math.floor(Math.random()*55 * 3600) + 60;
+                    data.onjob = !data.onjob;
+                }
+                if(e.key.toLowerCase() === 'd') {
+                data.damageTruck = Math.random();
+                data.damageTrailer = Math.random();
+                data.damageCargo = Math.random();
+                }
+                if (e.key               === ' ') data.parkingBrake = !data.parkingBrake;
             }
-            if(e.key.toLowerCase() === 'd') {
-              data.damageTruck = Math.random();
-              data.damageTrailer = Math.random();
-              data.damageCargo = Math.random();
-            }
-            if (e.key               === ' ') data.parkingBrake = !data.parkingBrake;
-        });
-
-        setInterval(() => { updateMockData(); }, 100);
-      }
+      });
     </script>
 
     <!-- Real Data -->
@@ -777,8 +912,8 @@
           const nameEl = document.getElementById('radio-name');
           const iconEl = document.getElementById('play-icon');
           const station = radioListData.find(s => s.url === currentRadioUrl);
-          titleEl.innerText = (radioIsPlaying ? currentRadioUrl : 'IN GAME RADIO');
-          nameEl.innerText = station ? station.name : (radioIsPlaying ? '未命名電台' : '---');
+          titleEl.innerText = (radioIsPlaying ? currentRadioUrl : t('in_game_radio'));
+          nameEl.innerText = station ? station.name : (radioIsPlaying ? t('unnamed_radio') : '---');
           iconEl.innerText = radioIsPlaying ? '\u23f8' : '\u25b6';
       }
 
