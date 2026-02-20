@@ -307,6 +307,7 @@
                 <p class="text-xs text-slate-400 mb-2" id="info_how_to_desc">
                     See <a href="https://github.com/JCxYIS/TruckerM3U8" target="_blank" class="text-orange-400 hover:underline">GitHub README</a> for more information.
                 </p>
+                <p class="text-xs text-emerald-400 mt-1" id="info_how_to_ip" style="display:none"></p>
             </div>
 
             <!-- Live Stream URL -->
@@ -421,6 +422,7 @@
         };
 
         let currentLang = localStorage.getItem('trucker_lang') || 'zh';
+        let serverIpAddress = "";
         
         function t(key) {
             return i18n[currentLang] ? (i18n[currentLang][key] || key) : key;
@@ -457,6 +459,15 @@
                     `詳見 <a href="https://github.com/JCxYIS/TruckerM3U8" target="_blank" class="text-orange-400 hover:underline">GitHub README</a> 說明。` :
                     `See <a href="https://github.com/JCxYIS/TruckerM3U8" target="_blank" class="text-orange-400 hover:underline">GitHub README</a> for more information.`;
             }
+
+            const infoHowToIp = document.getElementById('info_how_to_ip');
+            if(infoHowToIp && serverIpAddress) {
+                infoHowToIp.style.display = 'block';
+                const currentPort = window.location.port || '3378';
+                infoHowToIp.innerHTML = currentLang === 'zh' ? 
+                    `你可以使用其他裝置瀏覽 <a href="http://${serverIpAddress}:${currentPort}" target="_blank" class="text-orange-400 hover:underline">http://${serverIpAddress}:${currentPort}</a> 以進入此儀表板` :
+                    `You can use other devices to visit <a href="http://${serverIpAddress}:${currentPort}" target="_blank" class="text-orange-400 hover:underline">http://${serverIpAddress}:${currentPort}</a> to access this dashboard.`;
+            }
                 
             const infoTroubleDesc = document.getElementById('info_trouble_desc');
             if(infoTroubleDesc) {
@@ -469,6 +480,16 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('lang-indicator').innerText = `${currentLang}`;
             updateStaticText();
+
+            fetch('/ip')
+                .then(res => res.text())
+                .then(ip => {
+                    if(ip) {
+                        serverIpAddress = ip;
+                        updateStaticText();
+                    }
+                })
+                .catch(err => console.error('[Dashboard] Fetch IP error:', err));
         });
     </script>
 

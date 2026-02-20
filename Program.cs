@@ -20,6 +20,19 @@ app.MapGet("/version", () =>
     return "2.0";
 });
 
+app.MapGet("/ip", () =>
+{
+    var host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
+    foreach (var ip in host.AddressList)
+    {
+        if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && !System.Net.IPAddress.IsLoopback(ip))
+        {
+            return ip.ToString();
+        }
+    }
+    return "";
+});
+
 app.Map("/mp3", async (HttpContext context, HttpResponse response) =>
 {
     response.ContentType = "audio/mp3";
