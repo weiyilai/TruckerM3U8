@@ -13,6 +13,8 @@ builder.Services.AddHostedService<TelemetryService>();
 
 var app = builder.Build();
 
+app.MapGet("/", () => Results.Redirect("/dashboard.html"));
+
 app.MapGet("/version", () =>
 {
     return "2.0";

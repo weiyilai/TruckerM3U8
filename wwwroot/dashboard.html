@@ -681,13 +681,16 @@
       window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'm') {
                 useMockData = !useMockData;
-                data.rpmMax = 2500;
-                data.totalOdo = Math.random() * 100000;
-                data.tripOdo = Math.random() * data.totalOdo;
-                data.fuelCapacity = 1000;
-                data.fuelAmount = Math.random() * data.fuelCapacity;
-                data.nextRestStopValue = (Math.random()*11) * 60;
-                updateMockData();
+                if(useMockData) {
+                    data.time = Math.random()*60*60*24;
+                    data.rpmMax = 2500;
+                    data.totalOdo = Math.random() * 100000;
+                    data.tripOdo = Math.random() * data.totalOdo;
+                    data.fuelCapacity = 1000;
+                    data.fuelAmount = Math.random() * data.fuelCapacity;
+                    data.nextRestStopValue = (Math.random()*11) * 60;
+                    updateMockData();
+                }
             } 
             if(useMockData) {
                 if (e.key.toLowerCase() === 's') data.speedLimit = data.speedLimit === 0 ? 80 : 0;
@@ -701,18 +704,18 @@
                 if (e.key.toLowerCase() === 'f') data.fuelAmount = Math.random() * data.fuelCapacity;
                 if (e.key.toLowerCase() === 'r') data.nextRestStopValue = (Math.random()*11) * 60;
                 if (e.key.toLowerCase() === 'j') {
-                    data.cargoName = data.onJob ? "" : "幸福";
-                    data.isSpecialJob = data.onJob ? false : Math.random()>0.5;
-                    data.cargoMass = data.onJob ? 0 : Math.floor(Math.random() * 25)*1000 + 1000;
-                    data.cityDestination = data.onJob ? "xxx" : "綜藝大集合";
-                    data.navigationDistance = data.onJob ? 0 : Math.floor(Math.random() * 1000)*1000 + 1000;
-                    data.navigationTime = data.onJob ? 0 : Math.floor(Math.random()*55 * 3600) + 60;
-                    data.onjob = !data.onjob;
+                    data.cargoName = data.onJob ? "" : "Dakimakura";
+                    data.isSpecialJob = data.onJob ? false : true;
+                    data.cargoMass = data.onJob ? 0 : 68*1000 + 1000;
+                    data.cityDestination = data.onJob ? "xxx" : "TAIPEI";
+                    data.navigationDistance = data.onJob ? 0 : 69420*1000;
+                    data.navigationTime = data.onJob ? 0 : 87*3600+53*60;
+                    data.onjob = !data.onjob;                
                 }
                 if(e.key.toLowerCase() === 'd') {
-                data.damageTruck = Math.random();
-                data.damageTrailer = Math.random();
-                data.damageCargo = Math.random();
+                    data.damageTruck = Math.random();
+                    data.damageTrailer = Math.random();
+                    data.damageCargo = Math.random();
                 }
                 if (e.key               === ' ') data.parkingBrake = !data.parkingBrake;
             }
