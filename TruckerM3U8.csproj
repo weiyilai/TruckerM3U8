@@ -7,15 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ThirdParty\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="Data\radio.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
+	
+  <ItemGroup>
+	<None Include="wwwroot\**">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+	
   <ItemGroup>
     <None Update="ThirdParty\ffmpeg.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

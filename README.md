@@ -1,52 +1,141 @@
-# TruckerM3U8
+# TruckerM3U8 v2
 
-Convert (not only) m3u8 stream to mp3 that ETS2/ATS can recognize.
+Convert (not only) m3u8 stream to mp3 that ETS2/ATS can recognize.  
+Now with an interactive dashboard!
+
+![preview](https://static.jcxyis.com/images/B5uo8k9XaP.webp)
+
+## Features
+
+- **Stream Converter**: Listen to YouTube LIVE or M3U8 radio directly in ETS2/ATS.
+- **Interactive Web Dashboard**: A beautiful interface to manage your radios and see telemetry data.
+- **Built-in Telemetry**: Synchronize with Euro Truck Simulator 2 / American Truck Simulator to display your truck's data in the dashboard!
+- **Auto-Installation**: Easy one-click setup to inject the stream link into your truck's radio and install the telemetry plugin.
 
 ## How to use
 
-Download `TruckerM3U8_x64.zip` from [the release page](https://github.com/JCxYIS/TruckerM3U8/releases/latest)
+### Installation
 
-Unzip and execute `TruckerM3U8.exe`, a browser screen will show up
+1. Download `TruckerM3U8_x64.zip` from [the release page](https://github.com/JCxYIS/TruckerM3U8/releases/latest)
 
-![](https://i.imgur.com/Zbyd0I2.png)
+2. Unzip and execute `TruckerM3U8.exe`, a browser screen will show up. (If no browser is opened, you can open it manually by visiting `http://localhost:3378/`)
 
-Pick a radio and play, you can preview the audio from the above link (http://localhost:3378/).
+3. (Optional) Click 🌐 icon to switch language (ZH/EN)
 
-You can add your own radio in `wwwroot/radio.json`
+4. Click ℹ️ icon on the upper right to open Settings.
 
-![](https://i.imgur.com/UHCEv7z.png)
+5. Click "Add URL To Stream List" button to automatically add TruckerM3U8 URL into the game.
 
-## Telemetry
+6. (Optional) If you want to use the dashboard function, click the "Install Telemetry DLL" button.
 
-https://github.com/RenCloud/scs-sdk-plugin/releases/tag/V.1.12.1
-Place dll under `bin/win_x64/plugins`
+7. Pick a radio using "Radio Stations" button, wait a little moment until the radio name shows up.
 
-## How does it work
+8. Launch the game, open up the radio menu, select `TruckerM3U8`, and you are good to go!
 
-lol it's just ffmpeg launcher
+## Adding your own radio
 
+Add your own radio to `Data/radio.json`.  
+The application will automatically parse and display it in the radio station list.
+
+> [!TIP]  
+> Youtube links are supported too.  
+> For supported websites, please refer to [yt-dlp supported websites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) page.
+
+![radio.json](https://static.jcxyis.com/images/sLDGa5orJB.webp)
+
+## Interface
+
+![eng_preview](https://static.jcxyis.com/images/Mv03k359QB.webp)
+
+- Left Panel
+  - Left/Right blinker
+  - RPM/Speed
+  - Cruise Control / Gear / Speed Limit
+  - Odometer / Current Time / Trip Odometer (since Dashboard started, press `i` to reset)
+  - Low Beam / High Beam / Parking Brake / Warning Light / Engine Light
+- Right Panel 0
+  - Connected Game | Language (ZH/EN) | Infomation Toggle
+- Right Panel 1
+  - Fatigue / Fuel
+- Right Panel 2 (Navigation)
+  - Job
+  - Navigation Distance / ETA
+- Right Panel 3 (Vehicle Status)
+  - Truck Damage / Trailer Damage / Cargo Damage
+- Bottom Panel
+  - Radio URL | Radio Name | Last | Play/Stop | Next | Radio List
+
+![info](https://static.jcxyis.com/images/5XxL2OFSZd.webp)
+
+![radiostations](https://static.jcxyis.com/images/DiwW0PAxMR.webp)
+
+## Access Dashboard from other devices
+
+If you want to access the dashboard from other devices, you can click ℹ️ icon on the upper right to open Settings,
+
+---
+
+## For developers
+
+### How it works
+
+```text
++----------+      +--------+      (Download & convert via yt-dlp & FFmpeg)
+| Stream   | ---> | FFmpeg |
+| URL      |      +--------+
++----------+          |
+                      | Output MP3 stream (Port 1049)
+                      v
++-------------------------------+  SignalR (Port 3378)   +-----------------+
+| TruckerM3U8 (ASP.NET Core)    | <--------------------> | Web Dashboard   |
++-------------------------------+                        +-----------------+
+                      |
+                      | HTTP GET /mp3 (Port 3378)
+                      v
+              +-------------+
+              | User (ETS2) |
+              +-------------+
 ```
-+-------------+
-|   FFMPEG    |  (Download & convert m3u8 to mp3 stream)
-+-------------+
-     |
-     | tcp (port 1049)
-     |
-     v
-+-------------+
-| TruckerM3U8 | (Distribute mp3 stream)
-+-------------+
-     |
-     | tcp (port 3378)
-     |
-     v
-+-------------+
-| User (ETS2) |
-+-------------+
-```
 
-## My Truck
+### How to build
 
-🥰🥰🥰
+1. Ensure you have the `.NET SDK` installed (.NET 10).
+2. Clone the repository.
+3. The project requires third-party tools (like `ffmpeg.exe`, `yt-dlp.exe`, and `scs-telemetry.dll`). They should be placed in the `ThirdParty` directory.
+4. Run `dotnet run` to start the development server, or `dotnet publish -c Release` to build an executable.
 
-![](https://i.imgur.com/cUkSVLW.jpg)
+### Routes
+
+- `/dashboard.html` : Main Dashboard. Shows basic telemetry data and radio player.
+- `/telemetry.html` : Telemetry Data. A straightforward table showing raw telemetry fields and their real-time values, useful for debugging or monitoring.
+- `/settings.html` : Old page.
+- `/mp3` : MP3 Stream if radio is playing. (Used by game)
+
+### Dashboard simulation
+
+To simulate telemetry data without the game running, you can press 'm' key to start the "mocked" simulation in `dashboard` page.
+
+- `m`: start/stop mocked simulation
+- `s`: show speed limit
+- `c`: set cruise control
+- `e`: start engine
+- ` `: toggle parking brake
+- `i`: reset trip odometer
+- `[`: left blinker
+- `]`: right blinker
+- `l`: low beam light
+- `k`: high beam light
+- `f`: set fuel amount (randomized)
+- `r`: set fatigue meter (randomized)
+- `j`: set job (randomized)
+- `d`: set damage (randomized)
+
+## Third Party Tools Used
+
+- [FFmpeg](https://github.com/FFmpeg/FFmpeg) to convert the stream to mp3 format.
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) to resolves the direct media URL.
+- [scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin) to push game data to our application
+
+## Happy Trucking 🥰🥰🥰
+
+![my_truck_v2_🥰🥰🥰](https://static.jcxyis.com/images/xn1QjplX7A.webp)

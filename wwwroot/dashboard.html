@@ -76,21 +76,43 @@
             padding-left: 0.5rem;
         }
 
-        /* === Fixed-viewport scaling (reference: 1200×800, 3:2) === */
+        /* === Responsive Viewport Scaling === */
         html, body {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
+            background-color: #0f172a;
         }
-        #viewport {
-            width: 1200px;
-            height: 800px;
-            padding: 24px;
-            transform-origin: top left;
-            position: absolute;
-            top: 0; left: 0;
+
+        @media (orientation: landscape) {
+            html, body {
+                overflow: hidden;
+                width: 100vw;
+                height: 100vh;
+            }
+            #viewport {
+                width: 1200px;
+                height: 800px;
+                padding: 24px;
+                transform-origin: top left;
+                position: absolute;
+                top: 0; left: 0;
+            }
+        }
+
+        @media (orientation: portrait) {
+            html, body {
+                overflow-x: hidden;
+                overflow-y: auto;
+                min-height: 100vh;
+                touch-action: pan-y;
+            }
+            #viewport {
+                width: 100%;
+                min-height: 100vh;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -105,10 +127,10 @@
     "></div>
 
     <div id="viewport">
-    <div class="flex-1 grid grid-cols-12 gap-6 max-w-7xl mx-auto w-full">
+    <div class="flex-1 flex flex-col portrait:space-y-6 landscape:grid landscape:grid-cols-12 landscape:gap-6 max-w-7xl mx-auto w-full">
         
         <!-- LHS 儀表板區 -->
-        <div class="col-span-5 glass p-6 flex flex-col items-center justify-between">
+        <div class="landscape:col-span-5 glass p-6 flex flex-col items-center justify-between portrait:w-full portrait:max-w-md portrait:mx-auto">
             <!-- 方向燈 -->
             <div class="flex justify-between w-full px-8 mb-2">
                 <span id="indicator-left" class="text-6xl text-slate-700">⬅</span>
@@ -174,7 +196,7 @@
         </div>
 
         <!-- RHS 資訊區 -->
-        <div class="col-span-7 flex flex-col space-y-6">
+        <div class="landscape:col-span-7 flex flex-col space-y-6 portrait:w-full portrait:max-w-md portrait:mx-auto">
             <div class="glass p-3 flex justify-between items-center px-6">
                 <div class="speedo-font font-bold text-orange-500 tracking-wider text-lg">
                     TruckerM3U8
@@ -218,7 +240,7 @@
             <div class="glass p-6 flex-1 flex flex-col">
                 <div class="widget-title" data-i18n="navigation">行程導航</div>
                 <!-- 工作綱要 -->
-                <div id="cargo-card" class="mt-2 p-4 bg-slate-800/40 rounded-xl border border-emerald-500/20 flex items-center justify-between shadow-lg">
+                <div id="cargo-card" class="mt-2 p-4 bg-slate-800/40 rounded-xl border border-emerald-500/20 flex flex-wrap items-center justify-between gap-4 shadow-lg">
                     <div class="flex items-center space-x-4">
                         <div class="text-3xl" id="cargo-icon">？</div>
                         <div>
@@ -263,21 +285,21 @@
     </div>
 
     <!-- 音樂播放器 -->
-    <div class="mt-6 glass p-4 flex items-center justify-between px-8 relative">
-        <div class="flex items-center space-x-4">
-            <div class="w-12 h-12 bg-slate-700 rounded-md flex items-center justify-center text-2xl shadow-inner">📻</div>
-            <div>
+    <div class="mt-6 glass p-4 flex portrait:flex-col landscape:flex-row portrait:space-y-4 landscape:items-center landscape:justify-between px-4 landscape:px-8 relative portrait:max-w-md portrait:mx-auto">
+        <div class="flex items-center space-x-4 portrait:justify-center portrait:w-full">
+            <div class="w-12 h-12 bg-slate-700 rounded-md flex items-center justify-center text-2xl shadow-inner portrait:hidden">📻</div>
+            <div class="portrait:text-center">
                 <div class="text-[10px] text-slate-500 tracking-widest" id="radio-title">RADIO_TITLE</div>
                 <div class="font-bold text-lg" id="radio-name">RADIO_NAME</div>
             </div>
         </div>
-        <div class="flex items-center space-x-8">
+        <div class="flex items-center space-x-8 portrait:justify-center portrait:w-full">
             <button id="radio-prev" class="hover:text-orange-500 transition text-2xl">⏮</button>
             <button id="play-pause" class="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center hover:scale-105 transition shadow-lg shadow-orange-500/40 text-xl"><span id="play-icon">▶</span></button>
             <button id="radio-next" class="hover:text-orange-500 transition text-2xl">⏭</button>
         </div>
-        <div class="flex items-center">
-            <button onclick="togglePlaylist()" class="flex items-center space-x-2 bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition border border-white/10"><span class="text-sm font-bold" data-i18n="radio_list_btn">電台列表</span></button>
+        <div class="flex items-center portrait:justify-center portrait:w-full">
+            <button onclick="togglePlaylist()" class="flex items-center portrait:w-full portrait:justify-center space-x-2 bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition border border-white/10"><span class="text-sm font-bold" data-i18n="radio_list_btn">電台列表</span></button>
         </div>
     </div>
 
@@ -307,6 +329,7 @@
                 <p class="text-xs text-slate-400 mb-2" id="info_how_to_desc">
                     See <a href="https://github.com/JCxYIS/TruckerM3U8" target="_blank" class="text-orange-400 hover:underline">GitHub README</a> for more information.
                 </p>
+                <p class="text-xs text-emerald-400 mt-1" id="info_how_to_ip" style="display:none"></p>
             </div>
 
             <!-- Live Stream URL -->
@@ -344,7 +367,10 @@
             <!-- Version -->
             <div class="text-xs text-slate-500 border-t border-slate-700 pt-3 flex justify-between items-center">
                 <span id="info-version">v.--</span>
-                <a href="https://github.com/JCxYIS/TruckerM3U8/releases/latest" target="_blank" class="text-orange-400 underline" data-i18n="info_check_update">Check latest version</a>
+                <a href="https://github.com/JCxYIS/TruckerM3U8/releases/latest" target="_blank">
+                    <img src="https://img.shields.io/github/v/release/JCxYIS/TruckerM3U8?style=flat&label=Latest%20Version&color=%23fb923c" alt="Latest Version">
+                </a>
+                <!-- <a href="https://github.com/JCxYIS/TruckerM3U8/releases/latest" target="_blank" class="text-orange-400 underline" data-i18n="info_check_update">Check latest version</a> -->
             </div>
         </div>
     </div>
@@ -421,6 +447,7 @@
         };
 
         let currentLang = localStorage.getItem('trucker_lang') || 'zh';
+        let serverIpAddress = "";
         
         function t(key) {
             return i18n[currentLang] ? (i18n[currentLang][key] || key) : key;
@@ -457,18 +484,37 @@
                     `詳見 <a href="https://github.com/JCxYIS/TruckerM3U8" target="_blank" class="text-orange-400 hover:underline">GitHub README</a> 說明。` :
                     `See <a href="https://github.com/JCxYIS/TruckerM3U8" target="_blank" class="text-orange-400 hover:underline">GitHub README</a> for more information.`;
             }
+
+            const infoHowToIp = document.getElementById('info_how_to_ip');
+            if(infoHowToIp && serverIpAddress) {
+                infoHowToIp.style.display = 'block';
+                const currentPort = window.location.port || '3378';
+                infoHowToIp.innerHTML = currentLang === 'zh' ? 
+                    `你可以使用其他裝置 (連接同一網路) 瀏覽 <a href="http://${serverIpAddress}:${currentPort}" target="_blank" class="text-orange-400 hover:underline">http://${serverIpAddress}:${currentPort}</a> 以進入此儀表板` :
+                    `You can use other devices (connected to the same network) and visit <a href="http://${serverIpAddress}:${currentPort}" target="_blank" class="text-orange-400 hover:underline">http://${serverIpAddress}:${currentPort}</a> to access this dashboard.`;
+            }
                 
             const infoTroubleDesc = document.getElementById('info_trouble_desc');
             if(infoTroubleDesc) {
                 infoTroubleDesc.innerHTML = currentLang === 'zh' ? 
-                    `請嘗試從 <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">這裡</a> 下載較新的 FFMPEG 版本，並覆蓋 <code class="bg-slate-700 px-1 rounded">ThirdParty/ffmpeg.exe</code>。` :
-                    `Try download newer FFMPEG version from <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">here</a>. Simply replace <code class="bg-slate-700 px-1 rounded">ThirdParty/ffmpeg.exe</code>.`;
+                    `請嘗試下載更新的 <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">FFMPEG</a> 或 <a href="https://github.com/yt-dlp/yt-dlp/releases/latest" class="text-orange-400 underline" target="_blank">yt-dlp</a>。覆蓋對應的 <code class="bg-slate-700 px-1 rounded">ThirdParty/xxx.exe</code> 即可。` :
+                    `Try download newer <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">FFMPEG</a> or <a href="https://github.com/yt-dlp/yt-dlp/releases/latest" class="text-orange-400 underline" target="_blank">yt-dlp</a> version. Simply replace the corresponding <code class="bg-slate-700 px-1 rounded">ThirdParty/xxx.exe</code>.`;
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('lang-indicator').innerText = `${currentLang}`;
             updateStaticText();
+
+            fetch('/ip')
+                .then(res => res.text())
+                .then(ip => {
+                    if(ip) {
+                        serverIpAddress = ip;
+                        updateStaticText();
+                    }
+                })
+                .catch(err => console.error('[Dashboard] Fetch IP error:', err));
         });
     </script>
 
@@ -681,13 +727,16 @@
       window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'm') {
                 useMockData = !useMockData;
-                data.rpmMax = 2500;
-                data.totalOdo = Math.random() * 100000;
-                data.tripOdo = Math.random() * data.totalOdo;
-                data.fuelCapacity = 1000;
-                data.fuelAmount = Math.random() * data.fuelCapacity;
-                data.nextRestStopValue = (Math.random()*11) * 60;
-                updateMockData();
+                if(useMockData) {
+                    data.time = Math.random()*60*60*24;
+                    data.rpmMax = 2500;
+                    data.totalOdo = Math.random() * 100000;
+                    data.tripOdo = Math.random() * data.totalOdo;
+                    data.fuelCapacity = 1000;
+                    data.fuelAmount = Math.random() * data.fuelCapacity;
+                    data.nextRestStopValue = (Math.random()*11) * 60;
+                    updateMockData();
+                }
             } 
             if(useMockData) {
                 if (e.key.toLowerCase() === 's') data.speedLimit = data.speedLimit === 0 ? 80 : 0;
@@ -701,18 +750,18 @@
                 if (e.key.toLowerCase() === 'f') data.fuelAmount = Math.random() * data.fuelCapacity;
                 if (e.key.toLowerCase() === 'r') data.nextRestStopValue = (Math.random()*11) * 60;
                 if (e.key.toLowerCase() === 'j') {
-                    data.cargoName = data.onJob ? "" : "幸福";
-                    data.isSpecialJob = data.onJob ? false : Math.random()>0.5;
-                    data.cargoMass = data.onJob ? 0 : Math.floor(Math.random() * 25)*1000 + 1000;
-                    data.cityDestination = data.onJob ? "xxx" : "綜藝大集合";
-                    data.navigationDistance = data.onJob ? 0 : Math.floor(Math.random() * 1000)*1000 + 1000;
-                    data.navigationTime = data.onJob ? 0 : Math.floor(Math.random()*55 * 3600) + 60;
-                    data.onjob = !data.onjob;
+                    data.cargoName = data.onJob ? "" : "Dakimakura";
+                    data.isSpecialJob = data.onJob ? false : true;
+                    data.cargoMass = data.onJob ? 0 : 68*1000 + 1000;
+                    data.cityDestination = data.onJob ? "xxx" : "TAIPEI";
+                    data.navigationDistance = data.onJob ? 0 : 69420*1000;
+                    data.navigationTime = data.onJob ? 0 : 87*3600+53*60;
+                    data.onjob = !data.onjob;                
                 }
                 if(e.key.toLowerCase() === 'd') {
-                data.damageTruck = Math.random();
-                data.damageTrailer = Math.random();
-                data.damageCargo = Math.random();
+                    data.damageTruck = Math.random();
+                    data.damageTrailer = Math.random();
+                    data.damageCargo = Math.random();
                 }
                 if (e.key               === ' ') data.parkingBrake = !data.parkingBrake;
             }
@@ -730,7 +779,7 @@
             .build();
 
         connection.on("ReceiveTelemetry", t => {
-            connectedGame = t.game;  // 'Ets2' | 'Ats'
+            connectedGame = t.game == 'Unknown' ? undefined : t.game;  // 'Ets2' | 'Ats' | undefined
 
             // --- Speedometer cluster ---
             data.speed = Math.abs(t.speedKph);
@@ -805,18 +854,29 @@
 
     <!-- uniform scaling -->
     <script>
-      // Fixed-viewport scaling: fit 1200×800 into any screen
+      // Responsive viewport scaling: fit 1200×800 into landscape screens, let portrait flow naturally
       function scaleViewport() {
           const vp = document.getElementById('viewport');
-          const scaleX = window.innerWidth / 1200;
-          const scaleY = window.innerHeight / 800;
-          const scale = Math.min(scaleX, scaleY);
-          vp.style.transform = `scale(${scale})`;
-          // Center if there's leftover space on one axis
-          const offsetX = (window.innerWidth - 1200 * scale) / 2;
-          const offsetY = (window.innerHeight - 800 * scale) / 2;
-          vp.style.left = offsetX + 'px';
-          vp.style.top = offsetY + 'px';
+          let iw = window.innerWidth;
+          let ih = window.innerHeight;
+
+          if (iw > ih) {
+              // Landscape: Use fixed scaling
+              const scaleX = iw / 1200;
+              const scaleY = ih / 800;
+              const scale = Math.min(scaleX, scaleY);
+              vp.style.transform = `scale(${scale})`;
+              // Center if there's leftover space on one axis
+              const offsetX = (iw - 1200 * scale) / 2;
+              const offsetY = (ih - 800 * scale) / 2;
+              vp.style.left = offsetX + 'px';
+              vp.style.top = offsetY + 'px';
+          } else {
+              // Portrait: Natural flex flow
+              vp.style.transform = 'none';
+              vp.style.left = '0';
+              vp.style.top = '0';
+          }
       }
       window.addEventListener('resize', scaleViewport);
       scaleViewport();
@@ -842,11 +902,12 @@
       // --- Fetch current playing station ---
       async function fetchCurrentPlaying() {
           try {
-              const resp = await fetch('/sourceUrl');
+              const resp = await fetch('/api/playback/sourceUrl');
               const url = await resp.text();
               currentRadioUrl = url.trim();
               radioIsPlaying = !!currentRadioUrl;
               updateRadioUI();
+              renderPlaylist();
           } catch (e) {
               console.error('[Radio] Failed to fetch current playing:', e);
           }
@@ -855,32 +916,33 @@
       // --- Send play request ---
       async function playStation(url) {
           try {
-              await fetch('/sourceUrl', {
+              fetchCurrentPlaying();   
+              const station = radioListData.find(s => s.url === url);
+              const radioName = station ? station.name : "";
+              const res = await fetch('/api/playback/playByName', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: `"${url}"`
-              });
-              currentRadioUrl = url;
-              radioIsPlaying = true;
-              updateRadioUI();
-              renderPlaylist();
+                  body: `"${radioName}"`
+              });                 
+              fetchCurrentPlaying();              
+              if (!res.ok) {
+                  const errorMsg = await res.text();
+                  alert(`Error ${res.status}: ${errorMsg}`);
+              }
           } catch (e) {
               console.error('[Radio] Failed to play:', e);
+              alert('Failed to play: ' + e.message);
           }
       }
 
       // --- Stop playback (send empty URL) ---
       async function stopPlayback() {
           try {
-              await fetch('/sourceUrl', {
+              fetchCurrentPlaying();
+              await fetch('/api/playback/stop', {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: '""'
               });
-              currentRadioUrl = '';
-              radioIsPlaying = false;
-              updateRadioUI();
-              renderPlaylist();
+              fetchCurrentPlaying();  
           } catch (e) {
               console.error('[Radio] Failed to stop:', e);
           }
@@ -978,8 +1040,12 @@
 
       async function infoApplyLiveStream() {
           if (!confirm('Add TruckerM3U8 URL to your ETS2/ATS live stream list?')) return;
-          await fetch('/api/fileCheck/liveStreamListApply');
+          const resp = await fetch('/api/fileCheck/liveStreamListApply');
           infoFetchStreamCheck();
+          alert(`
+Please restart ETS2/ATS to apply the changes.
+If the URL is not added, please go to the radio page in game, click "Update from the Internet", come back here and click this button again.
+          `);
       }
 
       async function infoFetchTelemetryCheck() {
@@ -999,6 +1065,11 @@
           if (!confirm('Install Telemetry DLL into ETS2/ATS?')) return;
           await fetch('/api/fileCheck/telemetryDllApply');
           infoFetchTelemetryCheck();
+          alert(`
+Please restart ETS2/ATS to apply the changes.
+If DLL is not installed, you can manually copy ThirdParty/scs-telemetry_v_1_12_1.dll to your game's bin/win_x64/plugins folder.
+It is possible the plugins directory doesn't exist yet (as with every default installation). In that case you need to create the plugins folder. Place the DLL inside the plugins folder.
+          `);
       }
 
       async function infoFetchVersion() {

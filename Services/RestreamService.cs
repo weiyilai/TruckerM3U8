@@ -32,10 +32,16 @@ namespace TruckerM3U8.Services
         /// <summary>
         /// Set Source Url
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">stream url</param>
         public void SetSourceUrl(string url)
         {
             _sourceUrl = url;
+            StartFfmpeg();
+        }
+
+        public void StopPlayback()
+        {
+            _sourceUrl = "";
             StartFfmpeg();
         }
 
@@ -51,7 +57,14 @@ namespace TruckerM3U8.Services
                 _listenerCancelTokenSource = new CancellationTokenSource();
                 _ffmpegProcess.Kill();
                 _ffmpegProcess.Dispose();
+                _ffmpegProcess = null;
                 _logger.LogInformation($"Stop the last FFMPEG session");
+            }
+
+            if(string.IsNullOrEmpty(SourceUrl))
+            {
+                _logger.LogInformation("No source URL, stop playback.");
+                return;
             }
 
             // YT-DLP
@@ -84,12 +97,13 @@ namespace TruckerM3U8.Services
                     }
                     if (string.IsNullOrEmpty(playbackUrl))
                     {
-                        _logger.LogError("yt-dlp returned no playback URL.");
-                        return; // Stop processing if no URL found
+                        _logger.LogError("This website is not supported... yt-dlp returned no playback URL.");
+                        _sourceUrl = "";
+                        throw new NotSupportedException(); // Stop processing if no URL found
                     }
                 }
             }
-            _logger.LogInformation($"Playback URL: {playbackUrl}");
+            _logger.LogInformation($"Get Playback URL: {playbackUrl}");
 
             // FFMPEG
             _ffmpegProcess = new Process();
@@ -126,9 +140,14 @@ namespace TruckerM3U8.Services
                         {
                             length = await inStream.ReadAsync(buffer, token);
                         }
+                        catch(OperationCanceledException)
+                        {
+                            _logger.LogInformation("StreamListener READ is cancelled.");
+                            break;
+                        }
                         catch (Exception e)
                         {
-                            _logger.LogError($"StreamListener READ error: {e}");
+                            _logger.LogError($"StreamListener READ error: {e}.");
                             StartFfmpeg();
                             break;
                         }
@@ -155,6 +174,11 @@ namespace TruckerM3U8.Services
                             {
                                 await _streams[i].WriteAsync(buffer, 0, length);
                                 //await _streams[i].FlushAsync();
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                _logger.LogInformation("StreamListener WRITE is cancelled.");
+                                break;
                             }
                             catch (Exception e)
                             {
