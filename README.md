@@ -3,8 +3,6 @@
 Convert (not only) m3u8 stream to mp3 that ETS2/ATS can recognize.  
 Now with an interactive dashboard!
 
-![preview](https://static.jcxyis.com/images/B5uo8k9XaP.webp)
-
 ## Features
 
 - **Stream Converter**: Listen to YouTube LIVE or M3U8 radio directly in ETS2/ATS.
