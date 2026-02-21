@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using System.Diagnostics;
 using TruckerM3U8.Hubs;
 using TruckerM3U8.Services;
@@ -62,24 +61,6 @@ app.Map("/mp3", async (HttpContext context, HttpResponse response) =>
 
         // cleanup
         restreamService.UnregisterStream(response.Body);
-    }
-});
-
-app.MapGet("/sourceUrl", () =>
-{    
-    using (var scope = app.Services.CreateScope())
-    {
-        var restreamService = scope.ServiceProvider.GetRequiredService<RestreamService>();
-        return restreamService.SourceUrl;
-    }
-});
-
-app.MapPost("/sourceUrl", ([FromBody] string url) =>
-{        
-    using (var scope = app.Services.CreateScope())
-    {
-        var restreamService = scope.ServiceProvider.GetRequiredService<RestreamService>();
-        restreamService.SetSourceUrl(url);
     }
 });
 

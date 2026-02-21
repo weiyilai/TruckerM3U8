@@ -902,11 +902,12 @@
       // --- Fetch current playing station ---
       async function fetchCurrentPlaying() {
           try {
-              const resp = await fetch('/sourceUrl');
+              const resp = await fetch('/api/playback/sourceUrl');
               const url = await resp.text();
               currentRadioUrl = url.trim();
               radioIsPlaying = !!currentRadioUrl;
               updateRadioUI();
+              renderPlaylist();
           } catch (e) {
               console.error('[Radio] Failed to fetch current playing:', e);
           }
@@ -915,32 +916,33 @@
       // --- Send play request ---
       async function playStation(url) {
           try {
-              await fetch('/sourceUrl', {
+              fetchCurrentPlaying();   
+              const station = radioListData.find(s => s.url === url);
+              const radioName = station ? station.name : "";
+              const res = await fetch('/api/playback/playByName', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: `"${url}"`
-              });
-              currentRadioUrl = url;
-              radioIsPlaying = true;
-              updateRadioUI();
-              renderPlaylist();
+                  body: `"${radioName}"`
+              });                 
+              fetchCurrentPlaying();              
+              if (!res.ok) {
+                  const errorMsg = await res.text();
+                  alert(`Error ${res.status}: ${errorMsg}`);
+              }
           } catch (e) {
               console.error('[Radio] Failed to play:', e);
+              alert('Failed to play: ' + e.message);
           }
       }
 
       // --- Stop playback (send empty URL) ---
       async function stopPlayback() {
           try {
-              await fetch('/sourceUrl', {
+              fetchCurrentPlaying();
+              await fetch('/api/playback/stop', {
                   method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: '""'
               });
-              currentRadioUrl = '';
-              radioIsPlaying = false;
-              updateRadioUI();
-              renderPlaylist();
+              fetchCurrentPlaying();  
           } catch (e) {
               console.error('[Radio] Failed to stop:', e);
           }
