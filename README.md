@@ -20,15 +20,28 @@ Now with an interactive dashboard!
 
 2. Unzip and execute `TruckerM3U8.exe`, a browser screen will show up. (If no browser is opened, you can open it manually by visiting `http://localhost:3378/`)
 
-3. Click ℹ️ icon on the upper right to open Settings.
+3. (Optional) Click 🌐 icon to switch language (ZH/EN)
 
-4. Click "Add URL To Stream List" button to automatically add TruckerM3U8 URL into the game.
+4. Click ℹ️ icon on the upper right to open Settings.
 
-5. (Optional) If you want to use the dashboard function, click the "Install Telemetry DLL" button.
+5. Click "Add URL To Stream List" button to automatically add TruckerM3U8 URL into the game.
 
-6. Pick a radio using "Radio Stations" button, wait a little moment until the radio name shows up.
+6. (Optional) If you want to use the dashboard function, click the "Install Telemetry DLL" button.
 
-7. Launch the game, open up the radio menu, select `TruckerM3U8`, and you are good to go!
+7. Pick a radio using "Radio Stations" button, wait a little moment until the radio name shows up.
+
+8. Launch the game, open up the radio menu, select `TruckerM3U8`, and you are good to go!
+
+## Adding your own radio
+
+Add your own radio to `Data/radio.json`.  
+The application will automatically parse and display it in the radio station list.
+
+> [!TIP]  
+> Youtube links are supported too.  
+> For supported websites, please refer to [yt-dlp supported websites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) page.
+
+![radio.json](https://static.jcxyis.com/images/sLDGa5orJB.webp)
 
 ## Interface
 
@@ -56,16 +69,9 @@ Now with an interactive dashboard!
 
 ![radiostations](https://static.jcxyis.com/images/DiwW0PAxMR.webp)
 
-## Adding your own radio
+## Access Dashboard from other devices
 
-Add your own radio to `Data/radio.json`.  
-The application will automatically parse and display it in the radio station list.
-
-> [!TIP]  
-> Youtube links are supported too.  
-> For supported websites, please refer to [yt-dlp supported websites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) page.
-
-![radio.json](https://static.jcxyis.com/images/sLDGa5orJB.webp)
+If you want to access the dashboard from other devices, you can click ℹ️ icon on the upper right to open Settings,
 
 ---
 

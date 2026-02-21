@@ -490,15 +490,15 @@
                 infoHowToIp.style.display = 'block';
                 const currentPort = window.location.port || '3378';
                 infoHowToIp.innerHTML = currentLang === 'zh' ? 
-                    `你可以使用其他裝置瀏覽 <a href="http://${serverIpAddress}:${currentPort}" target="_blank" class="text-orange-400 hover:underline">http://${serverIpAddress}:${currentPort}</a> 以進入此儀表板` :
-                    `You can use other devices to visit <a href="http://${serverIpAddress}:${currentPort}" target="_blank" class="text-orange-400 hover:underline">http://${serverIpAddress}:${currentPort}</a> to access this dashboard.`;
+                    `你可以使用其他裝置 (連接同一網路) 瀏覽 <a href="http://${serverIpAddress}:${currentPort}" target="_blank" class="text-orange-400 hover:underline">http://${serverIpAddress}:${currentPort}</a> 以進入此儀表板` :
+                    `You can use other devices (connected to the same network) and visit <a href="http://${serverIpAddress}:${currentPort}" target="_blank" class="text-orange-400 hover:underline">http://${serverIpAddress}:${currentPort}</a> to access this dashboard.`;
             }
                 
             const infoTroubleDesc = document.getElementById('info_trouble_desc');
             if(infoTroubleDesc) {
                 infoTroubleDesc.innerHTML = currentLang === 'zh' ? 
-                    `請嘗試從 <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">這裡</a> 下載較新的 FFMPEG 版本，並覆蓋 <code class="bg-slate-700 px-1 rounded">ThirdParty/ffmpeg.exe</code>。` :
-                    `Try download newer FFMPEG version from <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">here</a>. Simply replace <code class="bg-slate-700 px-1 rounded">ThirdParty/ffmpeg.exe</code>.`;
+                    `請嘗試下載更新的 <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">FFMPEG</a> 或 <a href="https://github.com/yt-dlp/yt-dlp/releases/latest" class="text-orange-400 underline" target="_blank">yt-dlp</a>。覆蓋對應的 <code class="bg-slate-700 px-1 rounded">ThirdParty/xxx.exe</code> 即可。` :
+                    `Try download newer <a href="https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z" class="text-orange-400 underline" target="_blank">FFMPEG</a> or <a href="https://github.com/yt-dlp/yt-dlp/releases/latest" class="text-orange-400 underline" target="_blank">yt-dlp</a> version. Simply replace the corresponding <code class="bg-slate-700 px-1 rounded">ThirdParty/xxx.exe</code>.`;
             }
         }
 
@@ -1040,8 +1040,12 @@
 
       async function infoApplyLiveStream() {
           if (!confirm('Add TruckerM3U8 URL to your ETS2/ATS live stream list?')) return;
-          await fetch('/api/fileCheck/liveStreamListApply');
+          const resp = await fetch('/api/fileCheck/liveStreamListApply');
           infoFetchStreamCheck();
+          alert(`
+Please restart ETS2/ATS to apply the changes.
+If the URL is not added, please go to the radio page in game, click "Update from the Internet", come back here and click this button again.
+          `);
       }
 
       async function infoFetchTelemetryCheck() {
@@ -1061,6 +1065,11 @@
           if (!confirm('Install Telemetry DLL into ETS2/ATS?')) return;
           await fetch('/api/fileCheck/telemetryDllApply');
           infoFetchTelemetryCheck();
+          alert(`
+Please restart ETS2/ATS to apply the changes.
+If DLL is not installed, you can manually copy ThirdParty/scs-telemetry_v_1_12_1.dll to your game's bin/win_x64/plugins folder.
+It is possible the plugins directory doesn't exist yet (as with every default installation). In that case you need to create the plugins folder. Place the DLL inside the plugins folder.
+          `);
       }
 
       async function infoFetchVersion() {
