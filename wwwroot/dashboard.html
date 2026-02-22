@@ -632,9 +632,12 @@
             toggleLight('engine-warning-light', data.warning, 'light-on-red');
 
             // === Fatigue / Rest stop ===
-            let nextRestH = Math.floor(data.nextRestStopValue/60);
-            let nextRestM = Math.floor(data.nextRestStopValue%60);
-            document.getElementById('sleep-text').innerText = `${String(nextRestH).padStart(2, '0')}:${String(nextRestM).padStart(2, '0')}`;
+            let nextRestIsNegative = data.nextRestStopValue < 0;
+            let nextRestH = Math.floor(Math.abs(data.nextRestStopValue)/60);
+            let nextRestM = Math.floor(Math.abs(data.nextRestStopValue)%60);
+            document.getElementById('sleep-text').innerText = nextRestIsNegative ?
+                `-${String(nextRestH).padStart(2, '0')}:${String(nextRestM).padStart(2, '0')}` : 
+                `${String(nextRestH).padStart(2, '0')}:${String(nextRestM).padStart(2, '0')}`;  // negative fatigue time... stop driving!
             const restPercent = Math.min(100, Math.max(0, (60*nextRestH + nextRestM) / (11 * 60) * 100));  // 11h max drive time
             document.getElementById('sleep-bar').style.width = restPercent + '%';
 
@@ -789,7 +792,7 @@
 
             // --- Odometer / Time ---
             data.totalOdo = t.odometer;
-            if (tripOdoBase === null) tripOdoBase = t.odometer;
+            if (tripOdoBase === null && t.odometer > 0) tripOdoBase = t.odometer;
             data.tripOdo = t.odometer - tripOdoBase;
 
             // GameTime = total in-game minutes (uint). Only HH:mm matters.

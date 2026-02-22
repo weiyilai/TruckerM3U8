@@ -24,7 +24,7 @@ app.MapGet("/", () => Results.Redirect("/dashboard.html"));
 
 app.MapGet("/version", () =>
 {
-    return "2.0";
+    return "2.1";
 });
 
 app.MapGet("/ip", () =>
