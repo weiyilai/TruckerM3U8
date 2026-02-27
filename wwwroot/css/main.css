@@ -6,14 +6,15 @@
     --truck-green: #4caf50;
     --truck-blue: #2196f3;
     --truck-red: #f44336;
+
     --bg-dark: #0f172a;
     --panel-bg: rgba(30, 41, 59, 0.7);
     --text-main: #e2e8f0;
 }
 
 .light-theme {
-    --bg-dark: #f1f5f9;
-    --panel-bg: rgba(255, 255, 255, 0.8);
+    --bg-dark: #eff2ef;
+    --panel-bg: #FFFDF1;
     --text-main: #1e293b;
 }
 
@@ -27,4 +28,11 @@ body {
     display: flex;
     flex-direction: column;
     transition: background-color 0.3s ease;
+}
+
+.glass {
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
 }
