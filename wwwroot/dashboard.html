@@ -143,7 +143,7 @@
             </div>
 
             <!-- 下方數據資訊區 -->
-            <div class="w-full flex flex-col items-center">
+            <div class="w-full flex flex-col items-center portrait:hidden">
                 <!-- 定速 | 檔位 | 速限 -->
                 <div class="flex items-center justify-center space-x-10 h-14 -mt-8 mb-6">
                     <div id="cruise-container" class="flex items-center space-x-2 transition-all duration-300">
@@ -208,7 +208,7 @@
             </div>
 
             <!-- 小工具 R1：監測區域 -->
-            <div class="grid grid-cols-2 gap-6">
+            <div class="grid grid-cols-2 gap-6 ">
                 <div class="glass p-5">
                     <div class="widget-title" data-i18n="fatigue">疲勞監測</div>
                     <div class="flex justify-between items-end mb-2">
@@ -228,7 +228,7 @@
             </div>
 
             <!-- 小工具 R2：行程導航 -->
-            <div class="glass p-6 flex-1 flex flex-col">
+            <div class="glass p-6 flex-1 flex flex-col portrait:hidden">
                 <div class="widget-title" data-i18n="navigation">行程導航</div>
                 <!-- 工作綱要 -->
                 <div id="cargo-card" class="">  <!-- #cargo-card css is controlled by js -->
@@ -255,7 +255,7 @@
             </div>
 
             <!-- 小工具 R3：車損概要 -->
-            <div class="glass p-5">
+            <div class="glass p-5 portrait:hidden">
                 <div class="widget-title" data-i18n="vehicle_stat">車輛概要</div>
                 <div class="grid grid-cols-3 gap-4 mt-4">
                     <div class="text-center p-3 bg-slate-800/10 rounded-lg border border-white/10">
