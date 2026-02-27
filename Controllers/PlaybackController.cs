@@ -135,6 +135,27 @@ public class PlaybackController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// GET /api/playback/volume — return the current volume (e.g. 1.0 = 100%).
+    /// </summary>
+    [HttpGet("volume")]
+    public IActionResult GetVolume()
+    {
+        return Ok(_restreamService.Volume);
+    }
+
+    /// <summary>
+    /// POST /api/playback/volume — set the volume.
+    /// </summary>
+    [HttpPost("volume")]
+    public IActionResult SetVolume([FromBody] float volume)
+    {
+        // clamp to reasonable max, e.g., 5.0 (500%)
+        volume = Math.Clamp(volume, 0f, 5.0f);
+        _restreamService.SetVolume(volume);
+        return Ok(new { volume = _restreamService.Volume });
+    }
+
     // ─── radio list helpers ────────────────────────────────────────────────────
 
     private static List<RadioEntry> ReadRadioList()

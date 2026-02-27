@@ -12,6 +12,7 @@ namespace TruckerM3U8.Services
         private CancellationTokenSource _listenerCancelTokenSource = new CancellationTokenSource();
         private readonly List<Stream> _streams = new List<Stream>();
         private string _sourceUrl = "";
+        private float _volume = 1.0f;
 
         /// <summary>
         /// How many audiences?
@@ -22,6 +23,11 @@ namespace TruckerM3U8.Services
         /// Fetch the stream from which source
         /// </summary>
         public string SourceUrl => _sourceUrl;
+
+        /// <summary>
+        /// Current volume level (0.0~1.0)
+        /// </summary>
+        public float Volume => _volume;
 
 
         public RestreamService(ILogger<RestreamService> logger)
@@ -36,6 +42,16 @@ namespace TruckerM3U8.Services
         public void SetSourceUrl(string url)
         {
             _sourceUrl = url;
+            StartFfmpeg();
+        }
+
+        /// <summary>
+        /// Set Volume
+        /// </summary>
+        /// <param name="volume">volume level</param>
+        public void SetVolume(float volume)
+        {
+            _volume = volume;
             StartFfmpeg();
         }
 
@@ -109,7 +125,7 @@ namespace TruckerM3U8.Services
             _ffmpegProcess = new Process();
             _ffmpegProcess.StartInfo.FileName = @"ThirdParty/ffmpeg.exe";
             _ffmpegProcess.StartInfo.Arguments =
-                $"-re -i {playbackUrl} -listen 1 -c libmp3lame -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 4 -f mp3 tcp://127.0.0.1:1049";
+                $"-re -i {playbackUrl} -listen 1 -c libmp3lame -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 4 -af volume={_volume} -f mp3 tcp://127.0.0.1:1049";
             //_ffmpegProcess.StartInfo.CreateNoWindow = true; // uncomment to display FFMPEG logs            
             _ffmpegProcess.Start();
             _logger.LogInformation($"FFMPEG started (PID={_ffmpegProcess.Id})");
