@@ -125,7 +125,7 @@ namespace TruckerM3U8.Services
             _ffmpegProcess = new Process();
             _ffmpegProcess.StartInfo.FileName = @"ThirdParty/ffmpeg.exe";
             _ffmpegProcess.StartInfo.Arguments =
-                $"-re -i {playbackUrl} -listen 1 -c libmp3lame -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 4 -af volume={_volume} -f mp3 tcp://127.0.0.1:1049";
+                $"-re -i {playbackUrl} -listen 1 -c libmp3lame -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 4 -af \"volume={_volume}\" -f mp3 tcp://127.0.0.1:1049";
             //_ffmpegProcess.StartInfo.CreateNoWindow = true; // uncomment to display FFMPEG logs            
             _ffmpegProcess.Start();
             _logger.LogInformation($"FFMPEG started (PID={_ffmpegProcess.Id})");
